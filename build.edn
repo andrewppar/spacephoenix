@@ -1,0 +1,5 @@
+{:main phoenix.core
+ :output-to "phoenix.js"
+ :output-dir "out"
+ :optimizations :advanced
+ :externs ["./resources/phoenix-externs.js"]}
