@@ -3,11 +3,17 @@
 (defn focused []
   (.focused js/Window))
 
-(defn maximize-focused []
-  (.maximize (focused)))
-
 (defn maximize [window]
-  (.maximaize window))
+  (.maximize window))
+
+(defn maximize-focused []
+  (maximize (focused)))
+
+(defn minimize [window]
+  (.minimize window))
+
+(defn minimize-focused []
+  (minimize (focused)))
 
 (defn focus [window]
   (.focus window))
@@ -30,3 +36,9 @@
   (.setTopLeft window (clj->js {:x x :y y}))
   (.setSize window (clj->js {:width w :height h}))
   window)
+
+(defn close [window]
+  (.close window))
+
+(defn close-focused []
+  (close (focused)))

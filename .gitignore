@@ -2,3 +2,6 @@ out
 phoenix.js
 src/phoenix/.clj-kondo
 src/phoenix/.lsp
+.clj-kondo
+.cpcache
+.lsp

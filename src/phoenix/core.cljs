@@ -6,7 +6,6 @@
    [phoenix.menu :as menu]
    [phoenix.message :as message]
    [phoenix.window :as window]
-   [phoenix.screen :as screen]
    [phoenix.space :as space]
    [phoenix.tile :as tile]))
 
@@ -37,7 +36,7 @@
     :m {:title "Mail"
         :action (fn [] (app/launch "Mail"))}
     :q {:title "Quit"
-        :action app/quit-focused-app}
+        :action app/quit-focused}
     :s {:title "Safari"
         :action (fn [] (app/launch "Safari"))}}))
 
@@ -52,7 +51,11 @@
 
 (defn windows []
   (let [initial-map {:m {:title "Maximize"
-                         :action window/maximize-focused}}
+                         :action window/maximize-focused}
+                     :z {:title "Minimize"
+                         :action window/minimize-focused}
+                     :q {:title "Close"
+                         :action window/close-focused}}
         space-count (count (space/all))
         space-numbers  (range 1 (inc space-count))]
     (make-menu
@@ -94,7 +97,11 @@
                :items (windows)}
       :g      {:title "Quit"
                :modifiers [:ctrl]
-               :action (fn [] (menu/unbind-all-menu-keys))}}))})
+               :action (fn [] (menu/unbind-all-menu-keys))}
+      :r      {:title "Reload SpacePhoenix"
+               :action (fn []
+                         (.reload js/Phoenix))}
+      }))})
 
 (keys/bind "space" ["ctrl"]
            (fn []

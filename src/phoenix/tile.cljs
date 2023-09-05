@@ -22,9 +22,7 @@
   (let [windows (->> (space/current)
                      space/windows
                      (filter window/normal?))
-        screen  (screen/current)
-        height  (screen/height screen)
-        width   (screen/width screen)
+        {:keys [height width]} (screen/current-size)
         window-count (count windows)
         window-map   (get
                       (tile-configurations height width)

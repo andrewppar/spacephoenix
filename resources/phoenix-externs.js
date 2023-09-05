@@ -116,4 +116,5 @@ Window.spaces = function () {}
 Window.app = function() {}
 Window.focus = function() {}
 Window.focusClosestNeighbor = function() {}
+Window.close = function () {}
 Window.neighbors = function() {}

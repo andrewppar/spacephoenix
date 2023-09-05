@@ -1,5 +1,7 @@
 (ns phoenix.message
-  (:require [clojure.string :as string]))
+  (:require
+   [clojure.string :as string]
+   [phoenix.screen :as screen]))
 
 (defn notify
   [^String message]
@@ -8,11 +10,11 @@
 (defn alert
   [message & {:keys [duration] :or {duration 2}}]
   (let [modal (js/Modal.)
-        main-screen-rect (.flippedVisibleFrame (.main js/Screen))]
+        {:keys [height width]} (screen/current-size)]
     (set! (.-origin modal)
           #js
-          {:x (/ (.-width main-screen-rect) 2)
-           :y (/ (.-height main-screen-rect) 2)})
+          {:x (/ width  2)
+           :y (/ height 2)})
     (set! (.-text modal) (string/join " " message))
     (set! (.-duration modal) duration)
     (.show modal)
