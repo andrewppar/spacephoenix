@@ -1,8 +1,8 @@
-* Welcome to SpacePheonix
+* Welcome to SpacePhoenix
 
 A clojurescript window manager for OSX.
 
-The name of this project is SpacePhoenix despite the repo name. The core setup of SpacePhoenix is inspired by [[https://github.com/agzam/spacehammer][spacehammer]] but instead of using Fennel and Hammerspoon it uses clojurescript and [[https://kasper.github.io/phoenix/][Phoenix]]. In order to make compiling for Phoenix work smoothly, the repo name has been kept as phoenix. This could change in the future.
+The core setup of SpacePhoenix is inspired by [[https://github.com/agzam/spacehammer][spacehammer]] but instead of using Fennel and Hammerspoon it uses clojurescript and [[https://kasper.github.io/phoenix/][Phoenix]].
 
 * Quick Start
 
@@ -15,9 +15,10 @@ In order for this to work 'out of the box'.
 3. move to that repo `cd phoenix`
 4. build the `phoenix.js` file: `just build`
 5. Install phoenix: https://github.com/kasper/phoenix/releases/download/4.0.0/phoenix-4.0.0.tar.gza
+6. Start phoenix
 
 * Description
 
 I always loved window managers like i3 and xmonad. I was disappointed that I couldn't get anything like that to work on MacOS. I worked with several of the ones that are around but found them either clunky or requiring too much deep apple configuration to get them to work the way I wanted. Hammerspoon hit a sweet spot for me in that I could set things up myself and script my desktop environment. Hammerspoon requires Lua - I don't write in Lua every day. Luckily, fennel is a lisp that compiles to Lua. That made things better.
 
-Phoenix does the same thing as hammerspoon except that the scripting language is JavaScript. Lots of things compile to JavaScript, including clojurescript. So the idea of spacephoenix was born.
+Phoenix does the same thing as hammerspoon except that the scripting language is JavaScript. Lots of things compile to JavaScript, including clojurescript. So the idea of spacephoenix was born. It definitely is not still as nice as the window managers of my past, but it's a start
