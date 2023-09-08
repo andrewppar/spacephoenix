@@ -8,12 +8,12 @@ The core setup of SpacePhoenix is inspired by [[https://github.com/agzam/spaceha
 
 In order for this to work 'out of the box'.
 
-1. Install just `brew install just`
-2. Clone this repo into `$HOME/.config`
-   1. `cd $HOME/.config`
-   2. `git clone git@github.com:andrewppar/phoenix.git`
-3. move to that repo `cd phoenix`
-4. build the `phoenix.js` file: `just build`
+1. Install just =brew install just=
+2. Clone this repo into =$HOME/.config=
+   1. =cd $HOME/.config=
+   2. =git clone git@github.com:andrewppar/phoenix.git=
+3. move to that repo =cd phoenix=
+4. build the =phoenix.js= file: =just build=
 5. Install phoenix: https://github.com/kasper/phoenix/releases/download/4.0.0/phoenix-4.0.0.tar.gza
 6. Start phoenix
 
