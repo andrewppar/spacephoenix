@@ -1,4 +1,4 @@
-(ns phoenix.timer)
+(ns spacephoenix.timer)
 
 (defn make [interval callback
             & {:keys [repeat?] :or {repeat? false}}]

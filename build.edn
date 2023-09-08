@@ -1,5 +1,5 @@
-{:main phoenix.core
- :output-to "phoenix.js"
+{:main spacephoenix.core
+ :output-to "../phoenix/phoenix.js"
  :output-dir "out"
  :optimizations :advanced
- :externs ["./resources/phoenix-externs.js"]}
+ :externs ["./resources/spacephoenix-externs.js"]}

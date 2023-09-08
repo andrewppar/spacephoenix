@@ -60,6 +60,8 @@ Screen.next = function() {}
 Screen.previous = function() {}
 Screen.all = function() {}
 Screen.windows = function() {}
+Screen.currentSpace = function() {}
+Screen.spaces = function() {}
 Screen.frame = function () {}
 
 var Space = function () {}
@@ -98,6 +100,7 @@ Window.isFullScreen = function() {}
 Window.isMinimised = function() {}
 Window.isMinimized = function() {}
 Window.isVisible = function() {}
+Window.subrole = function() {}
 
 Window.frame = function() {}
 Window.topLeft = function() {}

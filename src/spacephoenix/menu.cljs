@@ -1,8 +1,8 @@
-(ns phoenix.menu
+(ns spacephoenix.menu
   (:require [clojure.string :as string]
-            [phoenix.keys :as keys]
-            [phoenix.message :as message]
-            [phoenix.timer :as timer]))
+            [spacephoenix.keys :as keys]
+            [spacephoenix.message :as message]
+            [spacephoenix.timer :as timer]))
 
 (declare down-layer)
 (declare up-layer)

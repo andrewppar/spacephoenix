@@ -1,4 +1,4 @@
-(ns phoenix.window)
+(ns spacephoenix.window)
 
 (defn focused []
   (.focused js/Window))
@@ -19,10 +19,19 @@
   (.focus window))
 
 (defn title [window]
-  (.title window))
+  (try (.title window)
+       (catch js/Object _
+         (println "No Title for window"))))
 
 (defn normal? [window]
   (= 1 (.isNormal window)))
+
+(defn subrole [window]
+  (.subrole window))
+
+(defn standard? [window]
+  (= (subrole window)
+     "AXStandardWindow"))
 
 (defn spaces [window]
   (.spaces window))

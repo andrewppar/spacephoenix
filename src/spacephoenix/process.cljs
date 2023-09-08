@@ -1,4 +1,4 @@
-(ns phoenix.shell)
+(ns spacephoenix.process)
 
 (defn applescript [script]
   (let [task (.run js/Task
@@ -6,3 +6,7 @@
                    (clj->js ["-e" script])
                    identity)]
     task))
+
+(defn browse-url [url]
+;;; (valid-url? url)
+  (.run js/Task "usr/bin/open" (clj->js [url]) identity))

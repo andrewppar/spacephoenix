@@ -1,4 +1,4 @@
-(ns phoenix.app)
+(ns spacephoenix.app)
 
 (defn launch [app-name & {:keys [focus?] :or {focus? true}}]
   (.launch js/App app-name (clj->js {:focus focus?})))

@@ -1,4 +1,4 @@
-(ns phoenix.keys)
+(ns spacephoenix.keys)
 
 (def bound-keys (atom {}))
 

@@ -1,13 +1,14 @@
-(ns phoenix.core
+(ns spacephoenix.core
   (:require
    [clojure.string :as string]
-   [phoenix.app :as app]
-   [phoenix.keys :as keys]
-   [phoenix.menu :as menu]
-   [phoenix.message :as message]
-   [phoenix.window :as window]
-   [phoenix.space :as space]
-   [phoenix.tile :as tile]))
+   [spacephoenix.app :as app]
+   [spacephoenix.keys :as keys]
+   [spacephoenix.menu :as menu]
+   [spacephoenix.message :as message]
+   [spacephoenix.process :as proc]
+   [spacephoenix.space :as space]
+   [spacephoenix.tile :as tile]
+   [spacephoenix.window :as window]))
 
 (message/alert "Welcome to SpacePhoenix")
 
@@ -20,7 +21,7 @@
   (assoc base-config :escape (exit)))
 
 (def config
-  {:switch-space-modifiers [:control]})
+  {:switch-space-modifiers [:command]})
 
 ;; Use grammarly config for this?
 (defn apps []
@@ -37,6 +38,8 @@
         :action (fn [] (app/launch "Mail"))}
     :q {:title "Quit"
         :action app/quit-focused}
+    :w {:title "Webex"
+        :action (fn [] (app/launch "Webex"))}
     :s {:title "Safari"
         :action (fn [] (app/launch "Safari"))}}))
 
@@ -80,6 +83,24 @@
                         (string/join ", " space-nums))}}
      space-nums)))
 
+
+(defn video-call []
+  {:b {:title "Brooke"
+       :action
+       (fn []
+         (proc/browse-url
+          "https://us06web.zoom.us/j/5142946429?pwd=ZDVTTndHYm9EKzRiSVBycWJ0NC8wdz09"))}
+   :i  {:title "Me"
+        :action
+        (fn []
+          (proc/browse-url
+           "https://cisco.webex.com/meet/anparisi"))}
+   :m  {:title "Mike"
+        :action
+        (fn []
+          (proc/browse-url
+           "https://us02web.zoom.us/j/6214579943?pwd=aXlJUkM3d1d3SENQbk42aXZUTW9OQT0"))}})
+
 (defn menu []
   {:title "Menu"
    :items
@@ -93,6 +114,8 @@
                :items (apps)}
       :t      {:title "Tile"
                :items (tile)}
+;;      :x      {:title "TEST"
+;;               :action (space/layout)}
       :w      {:title "Window"
                :items (windows)}
       :g      {:title "Quit"
@@ -101,7 +124,8 @@
       :r      {:title "Reload SpacePhoenix"
                :action (fn []
                          (.reload js/Phoenix))}
-      }))})
+      :v      {:title "Video Call"
+               :items (video-call)}}))})
 
 (keys/bind "space" ["ctrl"]
            (fn []

@@ -1,7 +1,7 @@
-(ns phoenix.message
+(ns spacephoenix.message
   (:require
    [clojure.string :as string]
-   [phoenix.screen :as screen]))
+   [spacephoenix.screen :as screen]))
 
 (defn notify
   [^String message]

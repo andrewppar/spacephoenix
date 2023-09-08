@@ -1,10 +1,10 @@
-(ns phoenix.space
+(ns spacephoenix.space
   (:require
    [clojure.string :as string]
-   [phoenix.app :as app]
-   [phoenix.screen :as screen]
-   [phoenix.shell :as shell]
-   [phoenix.window :as window]))
+   [spacephoenix.app :as app]
+   [spacephoenix.screen :as screen]
+   [spacephoenix.process :as proc]
+   [spacephoenix.window :as window]))
 
 (defn all []
   (.all js/Space))
@@ -28,11 +28,16 @@
                      keynum
                      " using "
                      modifier)]
-    (println script)
-    (shell/applescript script)))
+    (proc/applescript script)))
 
 (defn current []
   (.active js/Space))
 
 (defn windows [space]
   (.windows space))
+
+(defn layout []
+    (println
+    (mapv (fn [s]
+            (mapv window/title (windows s)))
+          (all))))
