@@ -97,7 +97,12 @@
    (make-menu
     (merge
      (switch-space-bindings)
-     custom/menu
+     (reduce-kv
+      (fn [custom-menu k submenu]
+        (assoc custom-menu k
+               (update submenu :items make-menu)))
+      {}
+      custom/menu)
      {:space {:title "Alfred"
               :action
               (fn [] (app/launch "Alfred 5"))}
