@@ -2,6 +2,7 @@
   (:require
    [clojure.string :as string]
    [spacephoenix.app :as app]
+   [spacephoenix.custom :as custom]
    [spacephoenix.keys :as keys]
    [spacephoenix.menu :as menu]
    [spacephoenix.message :as message]
@@ -21,7 +22,8 @@
   (assoc base-config :escape (exit)))
 
 (def config
-  {:switch-space-modifiers [:command]})
+  {:switch-space-modifiers [:command]
+   :m1? false})
 
 ;; Use grammarly config for this?
 (defn apps []
@@ -42,6 +44,11 @@
         :action (fn [] (app/launch "Webex"))}
     :s {:title "Safari"
         :action (fn [] (app/launch "Safari"))}}))
+
+(defn machine []
+  (make-menu
+   {:s {:title "Sleep"
+        :action (fn [] (proc/sleep))}}))
 
 (defn tile []
   (make-menu
@@ -84,48 +91,30 @@
      space-nums)))
 
 
-(defn video-call []
-  {:b {:title "Brooke"
-       :action
-       (fn []
-         (proc/browse-url
-          "https://us06web.zoom.us/j/5142946429?pwd=ZDVTTndHYm9EKzRiSVBycWJ0NC8wdz09"))}
-   :i  {:title "Me"
-        :action
-        (fn []
-          (proc/browse-url
-           "https://cisco.webex.com/meet/anparisi"))}
-   :m  {:title "Mike"
-        :action
-        (fn []
-          (proc/browse-url
-           "https://us02web.zoom.us/j/6214579943?pwd=aXlJUkM3d1d3SENQbk42aXZUTW9OQT0"))}})
-
 (defn menu []
   {:title "Menu"
    :items
    (make-menu
     (merge
      (switch-space-bindings)
+     custom/menu
      {:space {:title "Alfred"
               :action
               (fn [] (app/launch "Alfred 5"))}
       :a      {:title "Apps"
                :items (apps)}
+      :m      {:title "Machine"
+               :items (machine)}
+      :r      {:title "Reload SpacePhoenix"
+               :action (fn []
+                         (.reload js/Phoenix))}
       :t      {:title "Tile"
                :items (tile)}
-;;      :x      {:title "TEST"
-;;               :action (space/layout)}
       :w      {:title "Window"
                :items (windows)}
       :g      {:title "Quit"
                :modifiers [:ctrl]
-               :action (fn [] (menu/unbind-all-menu-keys))}
-      :r      {:title "Reload SpacePhoenix"
-               :action (fn []
-                         (.reload js/Phoenix))}
-      :v      {:title "Video Call"
-               :items (video-call)}}))})
+               :action (fn [] (menu/unbind-all-menu-keys))}}))})
 
 (keys/bind "space" ["ctrl"]
            (fn []
@@ -134,13 +123,5 @@
 
 ;; Start auto-tile by default
 (tile/start-auto-tile)
-
-
-
-
-
-
-
-
 
 ;; TODO: Create a fast build/watch option
