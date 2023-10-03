@@ -1,4 +1,5 @@
-(ns spacephoenix.window)
+(ns spacephoenix.window
+  (:require [clojure.string :as string]))
 
 (defn focused []
   (.focused js/Window))
@@ -30,8 +31,10 @@
   (.subrole window))
 
 (defn standard? [window]
-  (= (subrole window)
-     "AXStandardWindow"))
+  (and (= (subrole window)
+          "AXStandardWindow")
+       (not (string/starts-with? (title window) "Float"))
+       (not= (title window) "")))
 
 (defn spaces [window]
   (.spaces window))

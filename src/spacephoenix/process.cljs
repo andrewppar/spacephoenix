@@ -13,3 +13,10 @@
 
 (defn sleep []
   (.run js/Task "/usr/bin/pmset" (clj->js ["sleepnow"]) identity))
+
+(defn capture [task-description]
+  (let [command (str "(org-capture-engine-issue \""
+                     task-description
+                     "\")")
+        emacsclient  "/opt/homebrew/bin/emacsclient"]
+    (.run js/Task emacsclient (clj->js ["--eval" command]))))

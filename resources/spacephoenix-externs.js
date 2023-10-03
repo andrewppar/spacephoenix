@@ -35,15 +35,17 @@ var Key = function() {}
 Key.on = function(key, modifiers, callback) {}
 Key.off = function(handler) {}
 
-var Model = function() {}
+var Modal = function() {}
 // properties
-Model.origin = function() {}
-Model.duration = function() {}
-Model.text = function() {}
-
-Model.frame = function() {}
-Model.show = function() {}
-Model.close = function() {}
+Modal.frame = function() {}
+Modal.show = function() {}
+Modal.focus = function() {}
+Modal.close = function() {}
+Modal.build = function(properties) {}
+Modal.isInput
+Modal.appearance
+Modal.origin
+Modal.textDidCommit
 
 var Rectangle
 //properties

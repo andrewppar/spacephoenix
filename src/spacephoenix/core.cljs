@@ -9,6 +9,7 @@
    [spacephoenix.process :as proc]
    [spacephoenix.space :as space]
    [spacephoenix.tile :as tile]
+   [spacephoenix.emacs :as emacs]
    [spacephoenix.window :as window]))
 
 (message/alert "Welcome to SpacePhoenix")
@@ -44,6 +45,11 @@
         :action (fn [] (app/launch "Webex"))}
     :s {:title "Safari"
         :action (fn [] (app/launch "Safari"))}}))
+
+(defn emacs []
+  (make-menu
+   {:c {:title "Capture"
+        :action (fn [] (emacs/capture))}}))
 
 (defn machine []
   (make-menu
@@ -90,7 +96,6 @@
                         (string/join ", " space-nums))}}
      space-nums)))
 
-
 (defn menu []
   {:title "Menu"
    :items
@@ -108,6 +113,8 @@
               (fn [] (app/launch "Alfred 5"))}
       :a      {:title "Apps"
                :items (apps)}
+      :e      {:title "Emacs"
+               :items (emacs)}
       :m      {:title "Machine"
                :items (machine)}
       :r      {:title "Reload SpacePhoenix"
@@ -115,7 +122,7 @@
                          (.reload js/Phoenix))}
       :t      {:title "Tile"
                :items (tile)}
-      :w      {:title "Window"
+       :w      {:title "Window"
                :items (windows)}
       :g      {:title "Quit"
                :modifiers [:ctrl]
@@ -127,6 +134,6 @@
 
 
 ;; Start auto-tile by default
-(tile/start-auto-tile)
+;;(tile/start-auto-tile)
 
 ;; TODO: Create a fast build/watch option

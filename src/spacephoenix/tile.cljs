@@ -38,9 +38,9 @@
      (swap! events conj
             (.on js/Event event-string tile)))
    ["spaceDidChange"
-    "windowDidOpen"
-    "windowDidClose"
-    "windowDidFocus"
+    ;;"windowDidOpen"
+    ;;"windowDidClose"
+    ;;"windowDidFocus"
     "windowDidMove"
     "windowDidResize"
     "windowDidMinimize"
