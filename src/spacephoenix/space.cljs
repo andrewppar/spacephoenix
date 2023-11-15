@@ -9,10 +9,17 @@
 (defn all []
   (.all js/Space))
 
+(defn send-focused-window-to-space-internal [window space-number]
+  (let [space  (nth (all) (dec space-number))]
+    (.moveWindows space (clj->js [window]))))
+
 (defn send-focused-window-to-space [space-number]
-  (let [window (window/focused)
-        space  (nth (all) (dec space-number))]
-    (.moveWindows space (clj->js [window]))
+  (let [window (window/focused)]
+    (send-focused-window-to-space-internal window space-number)))
+
+(defn send-focused-window-to-space-and-refocus [space-number]
+  (let [window (window/focused)]
+    (send-focused-window-to-space-internal window space-number)
     (window/focus window)))
 
 (defn focus [space-number config]

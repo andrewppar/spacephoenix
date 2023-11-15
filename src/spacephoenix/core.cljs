@@ -27,24 +27,25 @@
    :m1? false})
 
 ;; Use grammarly config for this?
+(defn launch-app [app]
+  {:title app
+   :action (fn [] (app/launch app))})
+
+
 (defn apps []
   (make-menu
    {:a {:title "Alfred"
         :action (fn [] (app/launch "Alfred 5"))}
-    :b {:title "Brave Browser"
-        :action (fn [] (app/launch "Brave Browser"))}
-    :f {:title "Finder"
-        :action (fn [] (app/launch "Finder"))}
-    :i {:title "iTerm"
-        :action (fn [] (app/launch "iterm"))}
-    :m {:title "Mail"
-        :action (fn [] (app/launch "Mail"))}
+    :b (launch-app "Brave Browser")
+    :c (launch-app "Calendar")
+    :f (launch-app "Finder")
+    :i (launch-app "iTerm")
+    :m (launch-app "Mail")
     :q {:title "Quit"
         :action app/quit-focused}
-    :w {:title "Webex"
-        :action (fn [] (app/launch "Webex"))}
-    :s {:title "Safari"
-        :action (fn [] (app/launch "Safari"))}}))
+    :w (launch-app "Webex")
+    :s (launch-app "Safari")
+    :z (launch-app "Zoom")}))
 
 (defn emacs []
   (make-menu
@@ -56,18 +57,25 @@
    {:s {:title "Sleep"
         :action (fn [] (proc/sleep))}}))
 
-(defn tile []
-  (make-menu
-   {:t {:title "Tile"
-        :action (fn [] (tile/tile))}
-    :s {:title "Start Auto-Tile"
-        :action (fn [] (tile/start-auto-tile))}
-    :q {:title "Stop Auto-Tile"
-        :action (fn [] (tile/stop-auto-tile))}}))
+(defn move-window  []
+  (let [space-count (count (space/all))
+        space-numbers (range 1 (inc space-count))]
+    (make-menu
+     (reduce
+      (fn [result number]
+        (let [number-string (str number)]
+              (assoc result (keyword number-string)
+                     {:title (str "Send App to Space " number-string)
+                      :action
+                      (fn [] (space/send-focused-window-to-space number))})))
+      {}
+      space-numbers))))
 
 (defn windows []
-  (let [initial-map {:m {:title "Maximize"
+  (let [initial-map {:f {:title "Maximize"
                          :action window/maximize-focused}
+                     :m {:title "Move"
+                         :items (move-window)}
                      :z {:title "Minimize"
                          :action window/minimize-focused}
                      :q {:title "Close"
@@ -81,9 +89,11 @@
           (assoc result (keyword number-string)
                  {:title (str "Follow App to Space " number-string)
                   :action
-                  (fn [] (space/send-focused-window-to-space number))})))
+                  (fn [] (space/send-focused-window-to-space-and-refocus number))})))
       initial-map
       space-numbers))))
+
+
 
 (defn switch-space-bindings []
   (let [space-nums (range 1 (inc (count (space/all))))]
@@ -115,14 +125,14 @@
                :items (apps)}
       :e      {:title "Emacs"
                :items (emacs)}
-      :m      {:title "Machine"
+      :o      {:title "Operation"
                :items (machine)}
       :r      {:title "Reload SpacePhoenix"
                :action (fn []
                          (.reload js/Phoenix))}
       :t      {:title "Tile"
-               :items (tile)}
-       :w      {:title "Window"
+               :action (fn [] (tile/tile))}
+      :w      {:title "Window"
                :items (windows)}
       :g      {:title "Quit"
                :modifiers [:ctrl]
