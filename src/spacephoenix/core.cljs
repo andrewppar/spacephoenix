@@ -134,6 +134,11 @@
                :action (fn [] (tile/tile))}
       :w      {:title "Window"
                :items (windows)}
+      :s      {:title "Space"
+               :items {:s {:title "Start Auto Tile"
+                           :action (fn [] (tile/start-auto-tile))}
+                       :q {:title "Stop Auto Tile"
+                           :action (fn [] (tile/stop-auto-tile))}}}
       :g      {:title "Quit"
                :modifiers [:ctrl]
                :action (fn [] (menu/unbind-all-menu-keys))}}))})
@@ -144,6 +149,6 @@
 
 
 ;; Start auto-tile by default
-;;(tile/start-auto-tile)
+(tile/start-auto-tile)
 
 ;; TODO: Create a fast build/watch option

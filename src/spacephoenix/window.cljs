@@ -1,5 +1,30 @@
 (ns spacephoenix.window
-  (:require [clojure.string :as string]))
+  (:require
+   [clojure.string :as string]
+   [spacephoenix.utils :refer [defn-timed]]))
+
+(defn title [window]
+  (try (.title window)
+       (catch js/Object _
+         (println "No Title for window"))))
+
+(defn subrole [window]
+  (.subrole window))
+
+(defn screen [window]
+  (.screen window))
+
+(defn standard? [window]
+  (and (= (subrole window) "AXStandardWindow")
+       (not (string/starts-with? (title window) "Float"))
+       (not= (title window) "")))
+
+(defn normal? [window]
+  (= 1 (.isNormal window)))
+
+(defn-timed all [& {:keys [only-normal?]
+                    :or {only-normal? true}}]
+  (.all js/Window))
 
 (defn focused []
   (.focused js/Window))
@@ -19,30 +44,8 @@
 (defn focus [window]
   (.focus window))
 
-(defn title [window]
-  (try (.title window)
-       (catch js/Object _
-         (println "No Title for window"))))
-
-(defn normal? [window]
-  (= 1 (.isNormal window)))
-
-(defn subrole [window]
-  (.subrole window))
-
-(defn standard? [window]
-  (and (= (subrole window)
-          "AXStandardWindow")
-       (not (string/starts-with? (title window) "Float"))
-       (not= (title window) "")))
-
 (defn spaces [window]
   (.spaces window))
-
-(defn all [& {:keys [only-normal?]
-              :or {only-normal? true}}]
-  (cond->> (.all js/Window)
-    only-normal? (filter normal?)))
 
 (defn move-to [window {:keys [x y h w]}]
   (.setTopLeft window (clj->js {:x x :y y}))

@@ -94,7 +94,7 @@ Window.all = function(optionals) {}
 Window.recent = function() {}
 
 // Members
-Window.others = function(optional) {}
+Window.others = function(optionals) {}
 Window.title = function() {}
 Window.isMain = function() {}
 Window.isNormal = function() {}
