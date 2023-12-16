@@ -8,19 +8,14 @@
        (catch js/Object _
          (println "No Title for window"))))
 
-(defn subrole [window]
-  (.subrole window))
-
 (defn screen [window]
   (.screen window))
 
-(defn standard? [window]
-  (and (= (subrole window) "AXStandardWindow")
-       (not (string/starts-with? (title window) "Float"))
-       (not= (title window) "")))
-
 (defn normal? [window]
-  (= 1 (.isNormal window)))
+  (and
+   (= 1 (.isNormal window))
+   (not (string/starts-with? (title window) "Float"))
+   (not= (title window) "")))
 
 (defn-timed all [& {:keys [only-normal?]
                     :or {only-normal? true}}]
