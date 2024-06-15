@@ -4,7 +4,7 @@
    [spacephoenix.app :as app]
    [spacephoenix.screen :as screen]
    [spacephoenix.process :as proc]
-   [spacephoenix.window :as window]))
+   [spacephoenix.window.core :as window]))
 
 (defn all []
   (.all js/Space))

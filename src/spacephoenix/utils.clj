@@ -4,6 +4,6 @@
   `(defn ~name ~args
      (let [start# (.now js/Date)
            result# (do ~@body)]
-       (println "HELLO!!!!")
+       #_(println "HELLO!!!!")
        (println (str "WHAT time: " (- (.now js/Date) start#)))
        result#)))

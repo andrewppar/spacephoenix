@@ -8,8 +8,8 @@
     (swap! bound-keys dissoc key)))
 
 (defn bind
-  [key modifiers callback &
-   {:keys [key-type] :or {key-type :default}}]
+  [key callback &
+   {:keys [key-type modifiers] :or {key-type :default}}]
   (let [key-string (name key)
         handler (.on js/Key key-string (clj->js modifiers) callback)]
     (unbind key)

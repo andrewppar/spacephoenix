@@ -17,8 +17,8 @@
                    (message/notify "Unbinding SpacePhoenix Keys...")
                    (unbind-all-menu-keys)))]
     (when-not root?
-      (keys/bind :g [:ctrl]
-                 (fn [] (up-layer menu bread-crumbs timer alert))
+      (keys/bind :g (fn [] (up-layer menu bread-crumbs timer alert))
+                 :modifiers [:ctrl]
                  :key-type ::menu))
     (when-let [new-items (get-in menu new-crumbs)]
       (reduce-kv
@@ -28,12 +28,13 @@
              (let [menu-fn (fn []
                              (message/close-alert alert)
                              (down-layer menu new-crumbs key timer))]
-               (keys/bind key modifiers menu-fn :key-type ::menu))
-             (keys/bind key modifiers (fn []
+               (keys/bind key menu-fn :modifiers modifiers :key-type ::menu))
+             (keys/bind key (fn []
                                         (message/close-alert alert)
                                         (timer/off timer)
                                         (unbind-all-menu-keys)
-                                        (action))
+                              (action))
+                        :modifiers modifiers
                         :key-type ::menu))))
        nil
        new-items))))

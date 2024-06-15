@@ -10,7 +10,8 @@
    [spacephoenix.space :as space]
    [spacephoenix.tile :as tile]
    [spacephoenix.emacs :as emacs]
-   [spacephoenix.window :as window]))
+   [spacephoenix.window.core :as window]
+   [spacephoenix.window.switcher :as window-switcher]))
 
 (message/alert "Welcome to SpacePhoenix")
 
@@ -36,21 +37,23 @@
   (make-menu
    {:a {:title "Alfred"
         :action (fn [] (app/launch "Alfred 5"))}
-    :b (launch-app "Brave Browser")
+    :b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
-    :i (launch-app "iTerm")
+    :i (launch-app "kitty")
     :m (launch-app "Mail")
     :q {:title "Quit"
         :action app/quit-focused}
     :w (launch-app "Webex")
     :s (launch-app "Safari")
-    :z (launch-app "Zoom")}))
+    :z (launch-app "zoom.us")}))
 
 (defn emacs []
   (make-menu
    {:c {:title "Capture"
-        :action (fn [] (emacs/capture))}}))
+        :action (fn [] (emacs/capture))}
+    :e {:title "emacs-anywhere"
+        :action (fn [] (proc/emacs-anywhere))}}))
 
 (defn machine []
   (make-menu
@@ -93,8 +96,6 @@
       initial-map
       space-numbers))))
 
-
-
 (defn switch-space-bindings []
   (let [space-nums (range 1 (inc (count (space/all))))]
     (reduce
@@ -118,34 +119,37 @@
                (update submenu :items make-menu)))
       {}
       custom/menu)
-     {:space {:title "Alfred"
+     {:space {:title "alfred"
               :action
               (fn [] (app/launch "Alfred 5"))}
-      :a      {:title "Apps"
+      :a      {:title "apps"
                :items (apps)}
-      :e      {:title "Emacs"
+      :e      {:title "emacs"
                :items (emacs)}
-      :o      {:title "Operation"
+      :o      {:title "operation"
                :items (machine)}
-      :r      {:title "Reload SpacePhoenix"
+      :r      {:title "reload SpacePhoenix"
                :action (fn []
                          (.reload js/Phoenix))}
-      :t      {:title "Tile"
-               :action (fn [] (tile/tile))}
-      :w      {:title "Window"
+      :w      {:title "window"
                :items (windows)}
       :s      {:title "Space"
-               :items {:s {:title "Start Auto Tile"
+               :items {:s {:title "start auto tile"
                            :action (fn [] (tile/start-auto-tile))}
-                       :q {:title "Stop Auto Tile"
-                           :action (fn [] (tile/stop-auto-tile))}}}
-      :g      {:title "Quit"
+                       :q {:title "stop auto tile"
+                           :action (fn [] (tile/stop-auto-tile))}
+                       :t {:title "tile"
+                           :action (fn [] (tile/tile))}}}
+      :x {:title "switch window"
+          :action (fn [] (window-switcher/switch!))}
+      :g      {:title "quit"
                :modifiers [:ctrl]
                :action (fn [] (menu/unbind-all-menu-keys))}}))})
 
-(keys/bind "space" ["ctrl"]
+(keys/bind "space"
            (fn []
-             (menu/enter (menu))))
+             (menu/enter (menu)))
+           :modifiers ["ctrl"])
 
 
 ;; Start auto-tile by default
