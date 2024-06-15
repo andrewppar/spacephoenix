@@ -45,7 +45,7 @@
                      (filter
                       (fn [window]
                         (and (= (window/screen window) screen)
-                             (window/standard? window)))))
+                             (window/normal? window)))))
         {:keys [x y height width]} (screen/current-size-and-position)
         #_#__ (println (map window/title (sort-by window/title windows)))
         window-count (count windows)
