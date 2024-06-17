@@ -7,7 +7,7 @@ clean-all: clean
 	rm -rf ../phoenix/phoenix.js
 
 copy-dev:
-	cp ../spacephoenix/phoenix.js ~/.phoenix.debug.js
+	cp phoenix.js ~/.phoenix.debug.js
 
 clean:
 	rm -rf out
