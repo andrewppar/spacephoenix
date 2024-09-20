@@ -13,10 +13,10 @@
    [spacephoenix.window.core :as window]
    [spacephoenix.window.switcher :as window-switcher]))
 
-(message/alert "Welcome to SpacePhoenix")
+(message/alert "welcome to spacephoenix")
 
 (defn exit []
-  {:title "Exit"
+  {:title "exit"
    :action
    (fn [] (menu/unbind-all-menu-keys))})
 
@@ -29,18 +29,18 @@
 
 ;; Use grammarly config for this?
 (defn launch-app [app]
-  {:title app
+  {:title (string/lower-case app)
    :action (fn [] (app/launch app))})
 
 
 (defn apps []
   (make-menu
-   {:a {:title "Alfred"
+   {:a {:title "alfred"
         :action (fn [] (app/launch "Alfred 5"))}
     :b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
-    :i (launch-app "kitty")
+    :i (launch-app "wezterm")
     :m (launch-app "Mail")
     :q {:title "Quit"
         :action app/quit-focused}
@@ -50,14 +50,14 @@
 
 (defn emacs []
   (make-menu
-   {:c {:title "Capture"
+   {:c {:title "capture"
         :action (fn [] (emacs/capture))}
     :e {:title "emacs-anywhere"
         :action (fn [] (proc/emacs-anywhere))}}))
 
 (defn machine []
   (make-menu
-   {:s {:title "Sleep"
+   {:s {:title "sleep"
         :action (fn [] (proc/sleep))}}))
 
 (defn move-window  []
@@ -68,20 +68,29 @@
       (fn [result number]
         (let [number-string (str number)]
               (assoc result (keyword number-string)
-                     {:title (str "Send App to Space " number-string)
+                     {:title (str "send window to space " number-string)
                       :action
                       (fn [] (space/send-focused-window-to-space number))})))
       {}
       space-numbers))))
 
 (defn windows []
-  (let [initial-map {:f {:title "Maximize"
+  (let [initial-map {:f {:title "maximize"
                          :action window/maximize-focused}
-                     :m {:title "Move"
+                     :l {:title "list"
+                         :action (fn [] (message/alert
+                                        (mapv
+                                         (fn [window]
+                                           (str (window/title window) "\n"))
+                                         (window/all))
+                                        :duration 10))}
+
+
+                     :m {:title "move"
                          :items (move-window)}
-                     :z {:title "Minimize"
+                     :z {:title "minimize"
                          :action window/minimize-focused}
-                     :q {:title "Close"
+                     :q {:title "close"
                          :action window/close-focused}}
         space-count (count (space/all))
         space-numbers  (range 1 (inc space-count))]
@@ -90,7 +99,7 @@
       (fn [result number]
         (let [number-string (str number)]
           (assoc result (keyword number-string)
-                 {:title (str "Follow App to Space " number-string)
+                 {:title (str "follow window to space " number-string)
                   :action
                   (fn [] (space/send-focused-window-to-space-and-refocus number))})))
       initial-map
@@ -103,7 +112,7 @@
        (assoc acc
               (keyword (str space-number))
               {:action (fn [] (space/focus space-number config))}))
-     {:nil {:title (str "Switch to space: "
+     {:nil {:title (str "switch to space: "
                         (string/join ", " space-nums))}}
      space-nums)))
 
@@ -128,7 +137,7 @@
                :items (emacs)}
       :o      {:title "operation"
                :items (machine)}
-      :r      {:title "reload SpacePhoenix"
+      :r      {:title "reload spacephoenix"
                :action (fn []
                          (.reload js/Phoenix))}
       :w      {:title "window"

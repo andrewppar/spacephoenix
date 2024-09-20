@@ -25,5 +25,5 @@
            "https://us02web.zoom.us/j/6214579943?pwd=aXlJUkM3d1d3SENQbk42aXZUTW9OQT0"))}})
 
 (def menu
-  {:v {:title "Video Call"
+  {:m {:title "meeting"
        :items (video-call)}})
