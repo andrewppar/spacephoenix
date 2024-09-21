@@ -7,10 +7,10 @@
    [spacephoenix.keys :as keys]
    [spacephoenix.menu :as menu]
    [spacephoenix.message :as message]
-   [spacephoenix.process :as proc]))
+   [spacephoenix.yabai.core :as yabai]))
 
 (message/alert "welcome to spacephoenix")
-;;(message/alert (.run js/Task "which" (clj->js ["emacsclient"]) identity))
+(yabai/move-window-right)
 
 (defn exit []
   {:title "exit"
