@@ -17,8 +17,8 @@
                    (message/notify "Unbinding SpacePhoenix Keys...")
                    (unbind-all-menu-keys)))]
     (when-not root?
-      (keys/bind :g [:ctrl]
-                 (fn [] (up-layer menu bread-crumbs timer alert))
+      (keys/bind :g (fn [] (up-layer menu bread-crumbs timer alert))
+                 :modifiers [:ctrl]
                  :key-type ::menu))
     (when-let [new-items (get-in menu new-crumbs)]
       (reduce-kv
@@ -28,33 +28,37 @@
              (let [menu-fn (fn []
                              (message/close-alert alert)
                              (down-layer menu new-crumbs key timer))]
-               (keys/bind key modifiers menu-fn :key-type ::menu))
-             (keys/bind key modifiers (fn []
+               (keys/bind key menu-fn :modifiers modifiers :key-type ::menu))
+             (keys/bind key (fn []
                                         (message/close-alert alert)
                                         (timer/off timer)
                                         (unbind-all-menu-keys)
-                                        (action))
+                              (action))
+                        :modifiers modifiers
                         :key-type ::menu))))
        nil
        new-items))))
 
 (defn display-new-bindings [menu bread-crumbs root?]
   (message/alert
-   (reduce-kv
-    (fn [acc key {:keys [title modifiers]}]
-      (let [key-name   (name key)
-            key-string (if (= modifiers [])
-                         key-name
-                         (string/join "+" (conj
-                                           (mapv name modifiers)
-                                           key-name)))]
-        (if title
-          (if (= key :nil)
-            (str acc title "\n")
-            (str acc key-string ": " title "\n"))
-          acc)))
-    (if-not root? "ctrl+g: Back\n" "")
-    (get-in menu (conj bread-crumbs :items)))
+   (string/join
+    "\n"
+    (sort
+     (reduce-kv
+      (fn [acc key {:keys [title modifiers]}]
+        (let [key-name   (name key)
+              key-string (if (= modifiers [])
+                           key-name
+                           (string/join "+" (conj
+                                             (mapv name modifiers)
+                                             key-name)))]
+          (if title
+            (if (= key :nil)
+              (conj acc (str title))
+              (conj acc (str key-string ": " title )))
+            acc)))
+      (if-not root? ["ctrl+g: Back"] [])
+      (get-in menu (conj bread-crumbs :items)))))
    :duration 4))
 
 (defn enter [menu]

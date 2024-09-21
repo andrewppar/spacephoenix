@@ -1,4 +1,4 @@
-(ns spacephoenix.window
+(ns spacephoenix.window.core
   (:require
    [clojure.string :as string]
    [spacephoenix.utils :refer [defn-timed]]))
@@ -22,8 +22,8 @@
 (defn normal? [window]
   (= 1 (.isNormal window)))
 
-(defn-timed all [& {:keys [only-normal?]
-                    :or {only-normal? true}}]
+(defn all [& {:keys [only-normal?]
+              :or {only-normal? true}}]
   (.all js/Window))
 
 (defn focused []
@@ -46,6 +46,9 @@
 
 (defn spaces [window]
   (.spaces window))
+
+(defn top-left [window]
+  (.topLeft window))
 
 (defn move-to [window {:keys [x y h w]}]
   (.setTopLeft window (clj->js {:x x :y y}))
