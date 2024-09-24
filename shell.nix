@@ -21,9 +21,15 @@ let
       )
       (
         alias {
+          name = "copy" ;
+          command = "cp phoenix.js $HOME/.config/phoenix/phoenix.js" ;
+        }
+      )
+      (
+        alias {
           ## maybe this should just be symlinked
           name = "copy-dev" ;
-          command = "cp phoenix.js ~/.phoenix.debug.js" ;
+          command = "cp phoenix.js $HOME/.phoenix.debug.js" ;
         }
       )
     ] ;
@@ -44,14 +50,24 @@ let
     [
       (
         bash-fn {
-          name = "build-dev";
-          commands = ["build" "copy-dev"] ;
+          name = "clean-all" ;
+          commands = [
+            "clean"
+            "rm -rf $HOME/phoenix/phoenix.js"
+            "rm -rf $HOME/.phoenix.debug.js"
+          ] ;
         }
       )
+      ( bash-fn {
+        name = "run" ;
+        commands = ["build" "copy"] ;
+      }
+      )
+
       (
         bash-fn {
-          name = "clean-all" ;
-          commands = [ "clean" "rm -rf ../phoenix/phoenix.js" ] ;
+          name = "run-dev";
+          commands = ["build" "copy-dev"] ;
         }
       )
     ] ;

@@ -102,7 +102,6 @@ Window.isFullScreen = function() {}
 Window.isMinimised = function() {}
 Window.isMinimized = function() {}
 Window.isVisible = function() {}
-Window.subrole = function() {}
 
 Window.frame = function() {}
 Window.topLeft = function() {}
@@ -122,4 +121,5 @@ Window.app = function() {}
 Window.focus = function() {}
 Window.focusClosestNeighbor = function() {}
 Window.close = function () {}
-Window.neighbors = function() {}
+Window.neighbours = function() {}
+Window.isEqual = function () {}

@@ -1,6 +1,6 @@
 (ns spacephoenix.yabai.core)
 
-(defn []
+(defn move-window-right []
   (.run
    js/Task
    "/run/current-system/sw/bin/yabai"
