@@ -47,7 +47,7 @@
 
 
 (defn app-space [app-name]
-
+  (println (str "APP SPACE: " app-name @pseudo-spaces))
   (or (space-found-for-app @active-space app-name)
       (some
        (fn [space]
@@ -80,10 +80,25 @@
       {}
       @pseudo-spaces))))
 
+(defn activate-app! [app space]
+  (println (str "ACTIVATE APP: " (app/title app) " " space " " @pseudo-spaces))
+  (let [app-title (app/title app)
+        entries (mapv
+                 (fn [{:keys [app] :as entry}]
+                   (if (= app app-title)
+                     (assoc entry :minimized? false)
+                     entry))
+                 (get @pseudo-spaces space))]
+    (swap! pseudo-spaces assoc space entries))
+  (println (str "ACTIVATE DONE: " @pseudo-spaces)))
+
 (defn minimize-focused []
-  (let [window (window.core/focused)]
+  (let [window (window.core/focused)
+        neighbor (window.core/visible-neighbor window)]
     (set-status! window :minimized? true)
-    (window.core/minimize window)))
+    (window.core/minimize window)
+    (when neighbor
+      (window.core/focus neighbor))))
 
 (def exclude-apps #{"Phoenix"})
 
@@ -98,6 +113,7 @@
     (swap! pseudo-spaces update space-number (fnil conj []) entry)))
 
 (defn activate [space]
+  (println (str "ACTIVATE: " space " " @pseudo-spaces))
   (when-not (= @active-space space)
     (let [to-activate (get @pseudo-spaces space)]
       (run!
@@ -135,7 +151,7 @@
     (remove-window! window)
     (add-entry! space-number entry)
     (when-not (= space-number @active-space)
-      (let [to-focus (window.core/neighbor window)]
+      (let [to-focus (window.core/visible-neighbor window)]
         (window.core/minimize window)
         (when to-focus
           (window.core/focus to-focus))))))
@@ -165,16 +181,10 @@
     "spaces\n=====\n"
     @pseudo-spaces)))
 
+;; do I really need this?
 (.on js/Event "windowDidOpen"
      (fn [window]
        (clean-up!)
        (add-entry! @active-space (entry window))))
 
 (.on js/Event "windowDidClose" clean-up!)
-
-
-(.on js/Event "appDidActivate"
-     (fn [app]
-       (clean-up!)
-       (when-let [space (app-space (app/title app))]
-         (activate space))))

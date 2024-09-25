@@ -41,12 +41,12 @@
            (.neighbours window direction))
          ["north" "south" "east" "west"])))
 
-(defn neighbor [window]
+(defn visible-neighbor [window]
   (some
    (fn [direction]
      (some
       (fn [neighbor-window]
-        (when (not (minimized? neighbor-window))
+        (when (visible? neighbor-window)
           neighbor-window))
       (js->clj (.neighbours window direction))))
    ["east" "west" "north" "south"]))

@@ -58,16 +58,29 @@ let
           ] ;
         }
       )
+      (
+        bash-fn {
+        name = "phoenix-quit" ;
+        commands = [''/usr/bin/osascript -e "tell application \"Phoenix\" to quit"''] ;
+      }
+      )
+
       ( bash-fn {
-        name = "run" ;
-        commands = ["build" "copy"] ;
+        name = "phoenix-run" ;
+        commands = [''/usr/bin/open -n /Applications/Phoenix.app''] ;
       }
       )
 
       (
         bash-fn {
+        name = "run" ;
+        commands = ["phoenix-quit" "build" "copy" "phoenix-run"] ;
+      }
+      )
+      (
+        bash-fn {
           name = "run-dev";
-          commands = ["build" "copy-dev"] ;
+          commands = ["phoenix-quit" "build" "copy-dev" "phoenix-run"] ;
         }
       )
     ] ;

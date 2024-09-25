@@ -7,8 +7,6 @@
    [spacephoenix.keys :as keys]
    [spacephoenix.menu :as menu]
    [spacephoenix.message :as message]
-   [spacephoenix.screen :as screen]
-
    [spacephoenix.window.core :as window]
    [spacephoenix.window.move :as window.move]
    [spacephoenix.pseudo-space :as ps]
@@ -31,7 +29,9 @@
 
 (defn handle-launched-app [app]
   (when app
+    (println (str "LAUNCH: " (app/title app) " " (ps/app-space (app/title app))))
     (when-let [space (ps/app-space (app/title app))]
+      (ps/activate-app! app space)
       (ps/activate space))))
 
 (defn launch-app [app-name]
@@ -66,7 +66,7 @@
           :j (action "south" window.move/south)
           :k (action "north" window.move/north)})}
     :q (action "close" window/close-focused)
-    :x (action "list" (fn [] (message/alert (window/title (window/neighbor (window/focused))))))
+    :x (action "list" (fn [] (message/alert (window/title (window/visible-neighbor (window/focused))))))
     }))
 
 (defn spaces []
