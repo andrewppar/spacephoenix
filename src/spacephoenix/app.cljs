@@ -13,7 +13,6 @@
 (defn windows [app]
   (.windows app))
 
-
 (def dont-care-apps
   #{"loginwindow"
     "universalaccessd"

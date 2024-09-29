@@ -20,8 +20,8 @@
    :app (app/title (window.core/app window))
    :minimized? (window.core/minimized? window)})
 
-(defn entry-app [{:keys [window]}]
-  (app/title (window.core/app window)))
+(defn entry-app [{:keys [app]}]
+  app)
 
 (defn minimize [{:keys [window]}]
   (window.core/minimize window))
@@ -80,8 +80,20 @@
       {}
       @pseudo-spaces))))
 
+(defn window-spaces [window]
+  (reduce-kv
+   (fn [acc space entries]
+     (let [in-space? (some
+                      (fn [{comp-window :window}]
+                        (.isEqual comp-window window))
+                      entries)]
+       (if in-space?
+         (conj acc space)
+         acc)))
+   #{}
+   @pseudo-spaces))
+
 (defn activate-app! [app space]
-  (println (str "ACTIVATE APP: " (app/title app) " " space " " @pseudo-spaces))
   (let [app-title (app/title app)
         entries (mapv
                  (fn [{:keys [app] :as entry}]
@@ -89,16 +101,7 @@
                      (assoc entry :minimized? false)
                      entry))
                  (get @pseudo-spaces space))]
-    (swap! pseudo-spaces assoc space entries))
-  (println (str "ACTIVATE DONE: " @pseudo-spaces)))
-
-(defn minimize-focused []
-  (let [window (window.core/focused)
-        neighbor (window.core/visible-neighbor window)]
-    (set-status! window :minimized? true)
-    (window.core/minimize window)
-    (when neighbor
-      (window.core/focus neighbor))))
+    (swap! pseudo-spaces assoc space entries)))
 
 (def exclude-apps #{"Phoenix"})
 
@@ -112,14 +115,46 @@
   (when (valid-entry? entry)
     (swap! pseudo-spaces update space-number (fnil conj []) entry)))
 
+(def window-minimize-event
+  (.on js/Event "windowDidMinimise"
+       (fn [window]
+         (let [new-entries (mapv
+                            (fn [{comp-window :window :as entry}]
+                              (if (.isEqual comp-window window)
+                                (assoc entry :minimized? true)
+                                entry))
+                            (get @pseudo-spaces @active-space))]
+           (swap! pseudo-spaces assoc @active-space new-entries)))))
+
+(def window-unminimize-event
+  (.on js/Event "windowDidUnminimise"
+       (fn [window]
+         (let [new-entries (mapv
+                            (fn [{comp-window :window :as entry}]
+                              (if (.isEqual comp-window window)
+                                (assoc entry :minimized? false)
+                                entry))
+                            (get @pseudo-spaces @active-space))]
+           (swap! pseudo-spaces assoc @active-space new-entries)))))
+
+(defn minimize-focused []
+  (let [window (window.core/focused)
+        neighbor (window.core/visible-neighbor window)]
+    (window.core/minimize window)
+    (when neighbor
+      (window.core/focus neighbor))))
+
 (defn activate [space]
-  (println (str "ACTIVATE: " space " " @pseudo-spaces))
   (when-not (= @active-space space)
+    (.off js/Event window-minimize-event)
+    (.off js/Event window-unminimize-event)
     (let [to-activate (get @pseudo-spaces space)]
       (run!
        (fn [[space-number window-entries]]
          (when (not= space-number space)
-           (run! minimize window-entries)))
+           (run!
+            (fn [{:keys [window]}] (window.core/minimize window))
+            window-entries)))
        @pseudo-spaces)
       (run! (fn [{:keys [minimized? window]}]
               ;; maybe factor this out
@@ -134,6 +169,8 @@
          (when (window.core/visible? window)
            (window.core/focus window)))
        (get @pseudo-spaces @active-space)))
+    (.on js/Event window-minimize-event)
+    (.on js/Event window-unminimize-event)
     (message/alert (str "space: " @active-space))))
 
 (defn clean-up! []
@@ -144,7 +181,11 @@
            {}
            @pseudo-spaces)))
 
+(defn delete! [space]
+  (swap! pseudo-spaces dissoc space))
+
 (defn to-space [space-number]
+  (.off js/Event window-minimize-event)
   (let [window (window.core/focused)
         entry (or (get-entry window :space space-number)
                   (entry window))]
@@ -154,7 +195,8 @@
       (let [to-focus (window.core/visible-neighbor window)]
         (window.core/minimize window)
         (when to-focus
-          (window.core/focus to-focus))))))
+          (window.core/focus to-focus))))
+    (.on js/Event window-minimize-event)))
 
 (defn make []
   (let [new-space (inc (apply max (spaces)))]
@@ -181,10 +223,12 @@
     "spaces\n=====\n"
     @pseudo-spaces)))
 
-;; do I really need this?
-(.on js/Event "windowDidOpen"
-     (fn [window]
-       (clean-up!)
-       (add-entry! @active-space (entry window))))
+(def window-close-event
+ (.on js/Event "windowDidClose" clean-up!))
 
-(.on js/Event "windowDidClose" clean-up!)
+(def app-activate-event
+  (.on js/Event "appDidActivate"
+       (fn [app]
+         (when-let [space (app-space (app/title app))]
+           (activate-app! app space)
+           (activate space)))))

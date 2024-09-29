@@ -27,16 +27,11 @@
   {:title title
    :action action-fn})
 
-(defn handle-launched-app [app]
-  (when app
-    (println (str "LAUNCH: " (app/title app) " " (ps/app-space (app/title app))))
-    (when-let [space (ps/app-space (app/title app))]
-      (ps/activate-app! app space)
-      (ps/activate space))))
+
 
 (defn launch-app [app-name]
   {:title (string/lower-case app-name)
-   :action (fn [] (handle-launched-app (app/launch app-name)))})
+   :action (fn [] (app/launch app-name))})
 
 (defn apps []
   (make-menu
@@ -69,30 +64,34 @@
     :x (action "list" (fn [] (message/alert (window/title (window/visible-neighbor (window/focused))))))
     }))
 
-(defn spaces []
+(defn make-space-menu [title-fn action-fn]
   (make-menu
-   (merge
-    (reduce
-     (fn [menu space]
-       (let [key (keyword (str space))
-             title (str "activate space " space)
-             act-fn (fn [] (ps/activate space))]
-         (assoc menu key (action title act-fn))))
-     {}
-     (ps/spaces))
-    {:m {:title "move"
-         :items (reduce
-                 (fn [menu space]
-                   (let [key (keyword (str space))
-                         title (str "move to space " space)
-                         act-fn (fn [] (ps/to-space space))]
-                     (assoc menu key (action title act-fn))))
-                 {}
-                 (ps/spaces))}
-     :l {:title "list"
-         :action ps/space-list}
-     :n {:title "new space"
-         :action ps/make}})))
+   (reduce
+    (fn [menu space]
+      (let [key (keyword (str space))
+            title (title-fn space)
+            act-closure (partial action-fn space)]
+        (assoc menu key (action title act-closure))))
+    {}
+    (ps/spaces))))
+
+(defn space []
+  (merge
+   (make-space-menu
+    (fn [space] (str "activate space " space))
+    (fn [space] (ps/activate space)))
+   {:m {:title "move"
+        :items (make-space-menu
+                (fn [space] (str "move to space " space))
+                (fn [space] (ps/to-space space)))}
+    :l {:title "list"
+        :action ps/space-list}
+    :n {:title "new space"
+        :action ps/make}
+    :x {:title "delete"
+        :items (make-space-menu
+                (fn [space] (str "delete space " space))
+                (fn [space] (ps/delete! space)))}}))
 
 (defn menu []
   {:title "Menu"
@@ -105,8 +104,7 @@
                (update submenu :items make-menu)))
       {}
       custom/menu)
-     {:space (action "launch app"
-                     (fn [] (handle-launched-app (app/launch-from-input))))
+     {:space (action "launch app" app/launch-from-input)
       :a {:title "apps"
           :items (apps)}
       :e {:title "emacs"
@@ -116,7 +114,7 @@
       :w {:title "window"
           :items (window)}
       :s {:title "space"
-          :items (spaces)}
+          :items (space)}
       :z (action "minimize" ps/minimize-focused)
       :g {:title "quit"
           :modifiers [:ctrl]
