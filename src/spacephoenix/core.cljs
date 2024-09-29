@@ -40,12 +40,12 @@
     :b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
-    :i (launch-app "kitty")
+    :i (launch-app "wezTerm")
     :m (launch-app "Mail")
     :q {:title "Quit"
         :action app/quit-focused}
     :w (launch-app "Webex")
-    :s (launch-app "Safari")
+    :s (launch-app "System Settings")
     :z (launch-app "zoom.us")}))
 
 (defn emacs []
