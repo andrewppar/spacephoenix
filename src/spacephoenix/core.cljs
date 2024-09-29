@@ -40,7 +40,7 @@
     :b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
-    :i (launch-app "wezTerm")
+    :i (launch-app "wezterm")
     :m (launch-app "Mail")
     :q {:title "Quit"
         :action app/quit-focused}
