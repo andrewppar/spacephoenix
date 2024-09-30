@@ -1,4 +1,5 @@
-(ns spacephoenix.utils)
+(ns spacephoenix.utils
+  (:require [clojure.java.io :as io]))
 
 (defmacro defn-timed [name args & body]
   `(defn ~name ~args

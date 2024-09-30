@@ -1,6 +1,7 @@
 (ns spacephoenix.window.core
   (:require
    [clojure.string :as string]
+   [spacephoenix.config :as cfg]
    [spacephoenix.utils :refer [defn-timed]]))
 
 (defn title [window]
@@ -22,7 +23,10 @@
   (= 1 (.isNormal window)))
 
 (defn minimized? [window]
-  (= 1 (.isMinimised window)))
+  (let [architecture (cfg/architecture)]
+    (case architecture
+      :aarch (.isMinimised window)
+      :x86 (= 1 (.isMinimised window)))))
 
 (defn visible? [window]
   (.isVisible window))
@@ -81,7 +85,10 @@
   (.hash window))
 
 (defn equal? [window-one window-two]
-  (= (id window-one) (id window-two)))
+  (let [architecture (cfg/architecture)]
+    (case architecture
+      :aarch (.isEqual window-one window-two)
+      :x86 (= (id window-one) (id window-two)))))
 
 (defn close [window]
   (.close window))

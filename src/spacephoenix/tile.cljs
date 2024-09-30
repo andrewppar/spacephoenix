@@ -2,8 +2,7 @@
   (:require
    [spacephoenix.app :as app]
    [spacephoenix.screen :as screen]
-   [spacephoenix.window.core :as window]
-   ))
+   [spacephoenix.window.core :as window]))
 
 (def events (atom nil))
 
