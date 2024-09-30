@@ -29,8 +29,7 @@
 (defn get-space-entry [space window]
   (some
    (fn [{comp-window :window :as entry}]
-         (when (.isEqual window comp-window)
-           entry))
+     (when (window.core/equal? window comp-window) entry))
    (get @pseudo-spaces space)))
 
 (defn get-entry [window & {:keys [space]}]
@@ -47,7 +46,6 @@
 
 
 (defn app-space [app-name]
-  (println (str "APP SPACE: " app-name @pseudo-spaces))
   (or (space-found-for-app @active-space app-name)
       (some
        (fn [space]
@@ -61,7 +59,7 @@
     (fn [acc space entries]
       (let [new-entries (filterv
                          (fn [{:keys [window]}]
-                           (not (.isEqual window to-remove)))
+                           (not (window.core/equal? window to-remove)))
                          entries)]
         (assoc acc space new-entries)))
     {}
@@ -69,7 +67,7 @@
 
 (defn set-status! [window status-type status]
   (let [entry-fn (fn [{comp-window :window :as entry}]
-                   (if (.isEqual window comp-window)
+                   (if (window.core/equal? window comp-window)
                      (assoc entry status-type status)
                      entry))]
     (reset!
@@ -85,7 +83,7 @@
    (fn [acc space entries]
      (let [in-space? (some
                       (fn [{comp-window :window}]
-                        (.isEqual comp-window window))
+                        (window.core/equal? comp-window window))
                       entries)]
        (if in-space?
          (conj acc space)
@@ -120,7 +118,7 @@
        (fn [window]
          (let [new-entries (mapv
                             (fn [{comp-window :window :as entry}]
-                              (if (.isEqual comp-window window)
+                              (if (window.core/equal? comp-window window)
                                 (assoc entry :minimized? true)
                                 entry))
                             (get @pseudo-spaces @active-space))]
@@ -131,7 +129,7 @@
        (fn [window]
          (let [new-entries (mapv
                             (fn [{comp-window :window :as entry}]
-                              (if (.isEqual comp-window window)
+                              (if (window.core/equal? comp-window window)
                                 (assoc entry :minimized? false)
                                 entry))
                             (get @pseudo-spaces @active-space))]

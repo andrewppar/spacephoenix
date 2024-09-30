@@ -67,7 +67,7 @@ let
 
       ( bash-fn {
         name = "phoenix-run" ;
-        commands = [''/usr/bin/open -n /Applications/Phoenix.app''] ;
+        commands = [''open -a /Applications/Phoenix.app --args -AppCommandLineArg''] ;
       }
       )
 

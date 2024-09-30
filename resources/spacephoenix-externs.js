@@ -123,3 +123,4 @@ Window.focusClosestNeighbor = function() {}
 Window.close = function () {}
 Window.neighbours = function() {}
 Window.isEqual = function () {}
+Window.hash = function () {}

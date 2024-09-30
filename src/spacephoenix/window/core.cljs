@@ -22,7 +22,7 @@
   (= 1 (.isNormal window)))
 
 (defn minimized? [window]
-  (.isMinimised window))
+  (= 1 (.isMinimised window)))
 
 (defn visible? [window]
   (.isVisible window))
@@ -76,6 +76,12 @@
   (.setTopLeft window (clj->js {:x x :y y}))
   (.setSize window (clj->js {:width w :height h}))
   window)
+
+(defn id [window]
+  (.hash window))
+
+(defn equal? [window-one window-two]
+  (= (id window-one) (id window-two)))
 
 (defn close [window]
   (.close window))

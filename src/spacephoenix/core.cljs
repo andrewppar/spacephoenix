@@ -7,13 +7,14 @@
    [spacephoenix.keys :as keys]
    [spacephoenix.menu :as menu]
    [spacephoenix.message :as message]
+   [spacephoenix.pseudo-space :as ps]
+   [spacephoenix.tile :as tile]
    [spacephoenix.window.core :as window]
    [spacephoenix.window.move :as window.move]
-   [spacephoenix.pseudo-space :as ps]
-
    [spacephoenix.window.switcher :as window-switcher]))
 
 ;;(ps/init)
+(tile/start-auto-tile)
 (message/alert "welcome to spacephoenix")
 
 (defn exit []
@@ -27,16 +28,13 @@
   {:title title
    :action action-fn})
 
-
-
 (defn launch-app [app-name]
   {:title (string/lower-case app-name)
    :action (fn [] (app/launch app-name))})
 
 (defn apps []
   (make-menu
-   {:a {:title "alfred"
-        :action (fn [] (app/launch "Alfred 5"))}
+   {:a (action "alfred" (fn [] (app/launch "Alfred 5")))
     :b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
@@ -53,16 +51,7 @@
 
 (defn window []
   (make-menu
-   {:m {:title "move"
-        :items
-        (make-menu
-         {:h (action "west" window.move/west)
-          :l (action "east" window.move/east)
-          :j (action "south" window.move/south)
-          :k (action "north" window.move/north)})}
-    :q (action "close" window/close-focused)
-    :x (action "list" (fn [] (message/alert (window/title (window/visible-neighbor (window/focused))))))
-    }))
+   {:q (action "close" window/close-focused)}))
 
 (defn make-space-menu [title-fn action-fn]
   (make-menu
@@ -84,10 +73,11 @@
         :items (make-space-menu
                 (fn [space] (str "move to space " space))
                 (fn [space] (ps/to-space space)))}
-    :l {:title "list"
-        :action ps/space-list}
-    :n {:title "new space"
-        :action ps/make}
+    :l (action "list" ps/space-list)
+    :n (action"new space" ps/make)
+    :s (action "start auto tile" tile/start-auto-tile)
+    :t (action "tile" tile/tile)
+    :q (action "stop auto tile" tile/stop-auto-tile)
     :x {:title "delete"
         :items (make-space-menu
                 (fn [space] (str "delete space " space))
