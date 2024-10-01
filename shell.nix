@@ -60,22 +60,28 @@ let
       )
       (
         bash-fn {
-        name = "phoenix-quit" ;
-        commands = [''/usr/bin/osascript -e "tell application \"Phoenix\" to quit"''] ;
-      }
+          name = "phoenix-quit" ;
+          commands = [''/usr/bin/osascript -e "tell application \"Phoenix\" to quit"''] ;
+        }
       )
 
       ( bash-fn {
         name = "phoenix-run" ;
-        commands = [''open -a /Applications/Phoenix.app --args -AppCommandLineArg''] ;
+        commands = [''/usr/bin/open -a /Applications/Phoenix.app --args -AppCommandLineArg''] ;
       }
       )
 
       (
         bash-fn {
-        name = "run" ;
-        commands = ["phoenix-quit" "build" "copy" "phoenix-run"] ;
-      }
+          name = "run" ;
+          commands = [
+            "phoenix-quit"
+            "build"
+            "copy"
+            ''echo "done."''
+            ''echo "don't forget to restart phoenix"''
+          ] ;
+        }
       )
       (
         bash-fn {

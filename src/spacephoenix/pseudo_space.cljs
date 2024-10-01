@@ -5,11 +5,13 @@
    [spacephoenix.app :as app]))
 
 (def initial-spaces [1 2 3])
+
 (def pseudo-spaces (atom
                     (reduce
                      (fn [acc space] (assoc acc space []))
                      {}
                      initial-spaces)))
+
 (def active-space (atom 1))
 
 (defn spaces []
@@ -38,6 +40,16 @@
        (fn [space]
          (get-space-entry space window))
        (spaces))))
+
+(defn get-space [window]
+  (some
+   (fn [space]
+     (some
+      (fn [{comp-window :window}]
+        (when (window.core/equal? window comp-window)
+          space))
+      (get @pseudo-spaces space)))
+   (spaces)))
 
 (defn ^:private space-found-for-app [space app-name]
   (some
@@ -93,6 +105,7 @@
 
 (defn activate-app! [app space]
   (let [app-title (app/title app)
+        ;; should/could we use set stautus here?
         entries (mapv
                  (fn [{:keys [app] :as entry}]
                    (if (= app app-title)
@@ -201,8 +214,15 @@
     (swap! pseudo-spaces assoc new-space [])
     (message/alert (str "space " new-space " created"))))
 
+(defn serialize-entry [{:keys [window app]}]
+  (let [title (window.core/title window)
+        formatted (if (>= (count title) 20)
+                    (str (subs title 0 17) "...")
+                    title)]
+    (str app " - " formatted)))
+
 (defn ^:private serialize-entries [entries]
-  (let [titles (set (map entry-app entries))]
+  (let [titles (mapv serialize-entry entries)]
     (reduce
      (fn [acc* title]
        (str acc* "\n     " title))
@@ -225,8 +245,15 @@
  (.on js/Event "windowDidClose" clean-up!))
 
 (def app-activate-event
-  (.on js/Event "appDidActivate"
+  (.on js/Event "appDidLaunch"
        (fn [app]
          (when-let [space (app-space (app/title app))]
            (activate-app! app space)
+           (activate space)))))
+
+(def window-focus-event
+  (.on js/Event "windowDidFocus"
+       (fn [window]
+         (let [space (or (get-space window) @active-space)]
+           (set-status! window :minimized? false)
            (activate space)))))
