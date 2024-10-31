@@ -20,7 +20,10 @@
        (not= (title window) "")))
 
 (defn normal? [window]
-  (= 1 (.isNormal window)))
+  (let [architecture (cfg/architecture)]
+    (case architecture
+      :aarch (.isNormal window)
+      :x86 (= 1 (.isNormal window)))))
 
 (defn minimized? [window]
   (let [architecture (cfg/architecture)]

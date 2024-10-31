@@ -33,15 +33,14 @@
 
 (defn apps []
   (make-menu
-   {:a (action "alfred" (fn [] (app/launch "Alfred 5")))
-    :b (launch-app "Firefox")
+   {:b (launch-app "Firefox")
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :i (launch-app "wezterm")
+    :l (launch-app "raycast")
     :m (launch-app "Mail")
     :q (action "quit" app/quit-focused)
     :w (launch-app "Webex")
-    :s (launch-app "Safari")
     :z (launch-app "zoom.us")}))
 
 (defn emacs []
@@ -86,7 +85,7 @@
   {:title "Menu"
    :items
    (make-menu
-    {:space (action "launch app" app/launch-from-input)
+    {:space (launch-app "raycast")
      :a {:title "apps"
          :items (apps)}
      :e {:title "emacs"
