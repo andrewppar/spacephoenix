@@ -1,7 +1,29 @@
-(ns spacephoenix.config)
+(ns spacephoenix.config
+  (:require
+   [clojure.string :as string]))
+
+(def ^:private config
+  {:architecture :x86
+   :auto-tile true})
+
 
 (defn architecture []
-  :aarch)
+  (get config :architecture))
 
 (defn auto-tile []
-  false)
+  (get config :auto-tile))
+
+(defn show []
+  (let [named-keys (->> config keys (map (juxt name identity)) (into {}))
+        max-setting (apply max (map (comp count first) named-keys))]
+    (reduce
+     (fn [acc [setting-name setting]]
+       (let [value (get config setting)
+             setting-string (str setting-name
+                                 (-> max-setting
+                                     (- (count setting-name))
+                                     (repeat " ")
+                                     string/join))]
+         (str acc setting-string ": " value "\n")))
+     ""
+     (sort-by first named-keys))))
