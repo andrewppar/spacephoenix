@@ -31,6 +31,7 @@
                      (filter
                       (fn [window]
                         (and (window/normal? window)
+                             (not (= (window/title window) ""))
                              (not (window/minimized? window)))))
                      (sort-by window/id))
         {:keys [x y height width]} (screen/current-size-and-position)
@@ -50,14 +51,17 @@
    ["appDidActivate"
     "windowDidMinimize"
     "windowDidUnminimize"])
-  (swap! events conj
-         (.on js/Event "windowDidOpen"
-              (fn [window]
-                (when (and (not (contains?
-                                 app/dont-care-apps
-                                 (app/title (window/app window))))
-                           (window/normal? window))
-                  (tile))))))
+  (run!
+   (fn [event-string]
+     (swap! events conj
+            (.on js/Event event-string
+                 (fn [window]
+                   (when (and (not (contains?
+                                    app/dont-care-apps
+                                    (app/title (window/app window))))
+                              (window/normal? window))
+                     (tile))))))
+   ["windowDidOpen" "windowDidClose"]))
 
 (defn stop-auto-tile []
   (mapv (fn [event] (.off js/Event event)) @events))

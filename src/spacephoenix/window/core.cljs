@@ -20,16 +20,17 @@
        (not= (title window) "")))
 
 (defn normal? [window]
-  (let [architecture (cfg/architecture)]
-    (case architecture
+  (case (cfg/architecture)
       :aarch (.isNormal window)
-      :x86 (= 1 (.isNormal window)))))
+      :x86 (= 1 (.isNormal window))))
 
 (defn minimized? [window]
-  (let [architecture (cfg/architecture)]
-    (case architecture
+  (case (cfg/architecture)
       :aarch (.isMinimised window)
-      :x86 (= 1 (.isMinimised window)))))
+      :x86 (= 1 (.isMinimised window))))
+
+(defn main? [window]
+  (.isMain window))
 
 (defn visible? [window]
   (.isVisible window))
@@ -88,10 +89,9 @@
   (.hash window))
 
 (defn equal? [window-one window-two]
-  (let [architecture (cfg/architecture)]
-    (case architecture
+  (case (cfg/architecture)
       :aarch (.isEqual window-one window-two)
-      :x86 (= (id window-one) (id window-two)))))
+      :x86 (= (id window-one) (id window-two))))
 
 (defn close [window]
   (.close window))

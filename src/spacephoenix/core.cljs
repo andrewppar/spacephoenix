@@ -67,15 +67,20 @@
    (make-space-menu
     (fn [space] (str "activate space " space))
     (fn [space] (ps/activate space)))
-   {:m {:title "move"
+   {:f {:title "move and follow"
+        :items (make-space-menu
+                (fn [space] (str "move and follow to " space))
+                (fn [space] (ps/to-space space) (ps/activate space)))}
+
+    :l (action "list" ps/space-list)
+    :m {:title "move"
         :items (make-space-menu
                 (fn [space] (str "move to space " space))
                 (fn [space] (ps/to-space space)))}
-    :l (action "list" ps/space-list)
-    :n (action"new space" ps/make)
+    :n (action "new space" ps/make)
+    :q (action "stop auto tile" tile/stop-auto-tile)
     :s (action "start auto tile" tile/start-auto-tile)
     :t (action "tile" tile/tile)
-    :q (action "stop auto tile" tile/stop-auto-tile)
     :x {:title "delete"
         :items (make-space-menu
                 (fn [space] (str "delete space " space))

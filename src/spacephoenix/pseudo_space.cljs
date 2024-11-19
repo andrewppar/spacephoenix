@@ -1,8 +1,8 @@
 (ns spacephoenix.pseudo-space
   (:require
-   [spacephoenix.window.core :as window.core]
+   [spacephoenix.app :as app]
    [spacephoenix.message :as message]
-   [spacephoenix.app :as app]))
+   [spacephoenix.window.core :as window.core]))
 
 (def initial-spaces [1 2 3])
 
