@@ -11,6 +11,7 @@ App.get = function(appName) {}
 App.launch = function(appName, optionals) {}
 App.focused = function() {}
 App.all = function() {}
+App.icon = function () {}
 
 App.processIdentifier = function() {}
 App.bundleIdentifier = function() {}

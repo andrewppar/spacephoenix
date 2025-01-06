@@ -1,8 +1,10 @@
 (ns spacephoenix.pseudo-space
   (:require
+   [clojure.string :as string]
    [spacephoenix.app :as app]
    [spacephoenix.message :as message]
-   [spacephoenix.window.core :as window.core]))
+   [spacephoenix.window.core :as window.core]
+   [spacephoenix.timer :as timer]))
 
 (def initial-spaces [1 2 3])
 
@@ -13,6 +15,13 @@
                      initial-spaces)))
 
 (def active-space (atom 1))
+
+(def default-assignment
+  {"WezTerm" 1
+   "Firefox" 2
+   "Webex" 3})
+
+
 
 (defn spaces []
   (keys @pseudo-spaces))
@@ -195,19 +204,26 @@
 (defn delete! [space]
   (swap! pseudo-spaces dissoc space))
 
+(defmacro with-event-suspend [event-name & body]
+  `(do
+     (.off js/Event ~event-name)
+     (do ~@body)
+     (.on js/Event ~event-name)))
+
+(defn window-to-space [space-number window]
+  (with-event-suspend window-minimize-event
+    (let [entry (or (get-entry window :space space-number)
+                    (entry window))]
+      (remove-window! window)
+      (add-entry! space-number entry)
+      (when-not (= space-number @active-space)
+        (let [to-focus (window.core/visible-neighbor window)]
+          (window.core/minimize window)
+          (when to-focus
+            (window.core/focus to-focus)))))))
+
 (defn to-space [space-number]
-  (.off js/Event window-minimize-event)
-  (let [window (window.core/focused)
-        entry (or (get-entry window :space space-number)
-                  (entry window))]
-    (remove-window! window)
-    (add-entry! space-number entry)
-    (when-not (= space-number @active-space)
-      (let [to-focus (window.core/visible-neighbor window)]
-        (window.core/minimize window)
-        (when to-focus
-          (window.core/focus to-focus))))
-    (.on js/Event window-minimize-event)))
+  (window-to-space space-number (window.core/focused)))
 
 (defn make []
   (let [new-space (inc (apply max (spaces)))]
@@ -230,16 +246,28 @@
      (rest titles))))
 
 (defn space-list []
-  (message/alert
-   (reduce-kv
-    (fn [acc space entries]
-      (let [active? (= space @active-space)]
-        (str acc (if active? "*" " ")
-             space ": "
-             (serialize-entries entries)
-             "\n")))
-    "spaces\n=====\n"
-    @pseudo-spaces)))
+  (let [assigned (reduce
+                  (fn [acc entries] (into acc (map :app entries)))
+                  #{"Phoenix"}
+                  (vals @pseudo-spaces))
+        unassigned (->> (app/all)
+                        (filter (comp seq app/windows))
+                        (map app/title)
+                        (filter (complement (partial contains? assigned)))
+                        set)]
+    (message/alert
+     (str
+      (reduce-kv
+       (fn [acc space entries]
+         (let [active? (= space @active-space)]
+           (str acc (if active? "*" " ")
+                space ": "
+                (serialize-entries entries)
+                "\n")))
+       "spaces\n=====\n"
+       @pseudo-spaces)
+      "Unassigned: \n"
+      (string/join "\n" unassigned)))))
 
 (def window-close-event
  (.on js/Event "windowDidClose" clean-up!))
@@ -250,6 +278,17 @@
          (when-let [space (app-space (app/title app))]
            (activate-app! app space)
            (activate space)))))
+
+;;; generalize this!!
+(def app-activate-space-management
+  (.on js/Event "appDidLaunch"
+       (fn [app]
+         (timer/make
+          1
+          (fn []
+            (let [app-name (app/title app)]
+              (when-let [space (get default-assignment app-name)]
+                (run! (partial window-to-space space) (app/windows app)))))))))
 
 (def window-focus-event
   (.on js/Event "windowDidFocus"

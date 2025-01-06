@@ -3,9 +3,8 @@
    [clojure.string :as string]))
 
 (def ^:private config
-  {:architecture :x86
+  {:architecture :aarch
    :auto-tile true})
-
 
 (defn architecture []
   (get config :architecture))

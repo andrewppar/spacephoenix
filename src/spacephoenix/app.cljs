@@ -72,6 +72,9 @@
        all-apps)
       all-apps)))
 
+(defn icon [app]
+  (.icon app))
+
 (defn launch-from-input []
   (let [{:keys [height width]} (screen/current-size-and-position)
         modal (js/Modal.)]
