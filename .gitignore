@@ -1,7 +1,8 @@
+.clj-kondo
+.cpcache
+.lsp
+.nrepl-port
 out
 phoenix.js
 src/phoenix/.clj-kondo
 src/phoenix/.lsp
-.clj-kondo
-.cpcache
-.lsp

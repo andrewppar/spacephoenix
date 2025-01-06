@@ -41,21 +41,24 @@
 
 (defn display-new-bindings [menu bread-crumbs root?]
   (message/alert
-   (reduce-kv
-    (fn [acc key {:keys [title modifiers]}]
-      (let [key-name   (name key)
-            key-string (if (= modifiers [])
-                         key-name
-                         (string/join "+" (conj
-                                           (mapv name modifiers)
-                                           key-name)))]
-        (if title
-          (if (= key :nil)
-            (str acc title "\n")
-            (str acc key-string ": " title "\n"))
-          acc)))
-    (if-not root? "ctrl+g: Back\n" "")
-    (get-in menu (conj bread-crumbs :items)))
+   (string/join
+    "\n"
+    (sort
+     (reduce-kv
+      (fn [acc key {:keys [title modifiers]}]
+        (let [key-name   (name key)
+              key-string (if (= modifiers [])
+                           key-name
+                           (string/join "+" (conj
+                                             (mapv name modifiers)
+                                             key-name)))]
+          (if title
+            (if (= key :nil)
+              (conj acc (str title))
+              (conj acc (str key-string ": " title )))
+            acc)))
+      (if-not root? ["ctrl+g: Back"] [])
+      (get-in menu (conj bread-crumbs :items)))))
    :duration 4))
 
 (defn enter [menu]

@@ -1,6 +1,7 @@
 (ns spacephoenix.window.core
   (:require
    [clojure.string :as string]
+   [spacephoenix.config :as cfg]
    [spacephoenix.utils :refer [defn-timed]]))
 
 (defn title [window]
@@ -8,19 +9,31 @@
        (catch js/Object _
          (println "No Title for window"))))
 
-(defn subrole [window]
-  (.subrole window))
-
 (defn screen [window]
   (.screen window))
 
+(defn app [window]
+  (.app window))
+
 (defn standard? [window]
-  (and (= (subrole window) "AXStandardWindow")
-       (not (string/starts-with? (title window) "Float"))
+  (and (not (string/starts-with? (title window) "Float"))
        (not= (title window) "")))
 
 (defn normal? [window]
-  (= 1 (.isNormal window)))
+  (case (cfg/architecture)
+      :aarch (.isNormal window)
+      :x86 (= 1 (.isNormal window))))
+
+(defn minimized? [window]
+  (case (cfg/architecture)
+      :aarch (.isMinimised window)
+      :x86 (= 1 (.isMinimised window))))
+
+(defn main? [window]
+  (.isMain window))
+
+(defn visible? [window]
+  (.isVisible window))
 
 (defn all [& {:keys [only-normal?]
               :or {only-normal? true}}]
@@ -28,6 +41,26 @@
 
 (defn focused []
   (.focused js/Window))
+
+(defn neighbors [window]
+  (into []
+        (mapcat
+         (fn [direction]
+           (.neighbours window direction))
+         ["north" "south" "east" "west"])))
+
+(defn visible-neighbor [window]
+  (some
+   (fn [direction]
+     (some
+      (fn [neighbor-window]
+        (when (visible? neighbor-window)
+          neighbor-window))
+      (js->clj (.neighbours window direction))))
+   ["east" "west" "north" "south"]))
+
+(defn focus [window]
+  (.focus window))
 
 (defn maximize [window]
   (.maximize window))
@@ -41,11 +74,8 @@
 (defn minimize-focused []
   (minimize (focused)))
 
-(defn focus [window]
-  (.focus window))
-
-(defn spaces [window]
-  (.spaces window))
+(defn unminimize [window]
+  (.unminimize window))
 
 (defn top-left [window]
   (.topLeft window))
@@ -54,6 +84,14 @@
   (.setTopLeft window (clj->js {:x x :y y}))
   (.setSize window (clj->js {:width w :height h}))
   window)
+
+(defn id [window]
+  (.hash window))
+
+(defn equal? [window-one window-two]
+  (case (cfg/architecture)
+      :aarch (.isEqual window-one window-two)
+      :x86 (= (id window-one) (id window-two))))
 
 (defn close [window]
   (.close window))
