@@ -266,8 +266,10 @@
                 "\n")))
        "spaces\n=====\n"
        @pseudo-spaces)
-      "Unassigned: \n"
-      (string/join "\n" unassigned)))))
+      (when (seq unassigned)
+        (str
+         "Unassigned: \n"
+         (string/join "\n" unassigned)))))))
 
 (def window-close-event
  (.on js/Event "windowDidClose" clean-up!))
