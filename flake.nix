@@ -22,13 +22,17 @@
             ''mkdir -p $out''
             ''cp phoenix.js $out/phoenix.js''
           ] ;
-        dependencies = [ pkgs.clojure pkgs.openjdk ] ;
+        buildDependencies = with pkgs; [ clojure openjdk] ;
+        # this doesn't get used in builds, but it is nice to have
+        # it in nix develop - probably should use nix shell nixpkgs#just
+        # if there's good tooling for that
+        devDependencies = with pkgs; [ just ];
       in {
         packages.default = pkgs.stdenv.mkDerivation {
           name = "spacephoenix" ;
           version = "0.0.1" ;
           src = ./. ;
-          buildInputs = dependencies ;
+          buildInputs = buildDependencies ++ devDependencies ;
           buildPhase = builtins.concatStringsSep "\n" buildSteps ;
           installPhase = builtins.concatStringsSep "\n" installSteps ;
         } ;
