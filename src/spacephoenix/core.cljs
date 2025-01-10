@@ -63,47 +63,47 @@
     (ps/spaces))))
 
 (defn space []
-  (merge
-   (make-space-menu
-    (fn [space] (str "activate space " space))
-    (fn [space] (ps/activate space)))
-   {:f {:title "move and follow"
-        :items (make-space-menu
-                (fn [space] (str "move and follow to " space))
-                (fn [space] (ps/to-space space) (ps/activate space)))}
+  {:f {:title "move and follow"
+       :items (make-space-menu
+               (fn [space] (str "move and follow to " space))
+               (fn [space] (ps/to-space space) (ps/activate space)))}
 
-    :l (action "list" ps/space-list)
-    :m {:title "move"
-        :items (make-space-menu
-                (fn [space] (str "move to space " space))
-                (fn [space] (ps/to-space space)))}
-    :n (action "new space" ps/make)
-    :q (action "stop auto tile" tile/stop-auto-tile)
-    :s (action "start auto tile" tile/start-auto-tile)
-    :t (action "tile" tile/tile)
-    :x {:title "delete"
-        :items (make-space-menu
-                (fn [space] (str "delete space " space))
-                (fn [space] (ps/delete! space)))}}))
+   :l (action "list" ps/space-list)
+   :m {:title "move"
+       :items (make-space-menu
+               (fn [space] (str "move to space " space))
+               (fn [space] (ps/to-space space)))}
+   :n (action "new space" ps/make)
+   :q (action "stop auto tile" tile/stop-auto-tile)
+   :s (action "start auto tile" tile/start-auto-tile)
+   :t (action "tile" tile/tile)
+   :x {:title "delete"
+       :items (make-space-menu
+               (fn [space] (str "delete space " space))
+               (fn [space] (ps/delete! space)))}})
 
 (defn menu []
   {:title "Menu"
    :items
-   (make-menu
-    {:space (launch-app "raycast")
-     :a {:title "apps"
-         :items (apps)}
-     :e {:title "emacs"
-         :items (emacs)}
-     :f (action "focus" window-switcher/switch!)
-     :r (action "reload spacephoenix" (fn [] (.reload js/Phoenix)))
-     :w {:title "window"
-         :items (window)}
-     :s {:title "space"
-         :items (space)}
-     :z (action "minimize" ps/minimize-focused)
-     :g {:title "quit"
-         :modifiers [:ctrl]
-         :action (fn [] (menu/unbind-all-menu-keys))}})})
+   (merge
+    (make-space-menu
+     (fn [space] (str "activate space " space))
+     (fn [space] (ps/activate space)))
+    (make-menu
+     {:space (launch-app "raycast")
+      :a {:title "apps"
+          :items (apps)}
+      :e {:title "emacs"
+          :items (emacs)}
+      :f (action "focus" window-switcher/switch!)
+      :r (action "reload spacephoenix" (fn [] (.reload js/Phoenix)))
+      :w {:title "window"
+          :items (window)}
+      :s {:title "space"
+          :items (space)}
+      :z (action "minimize" ps/minimize-focused)
+      :g {:title "quit"
+          :modifiers [:ctrl]
+          :action (fn [] (menu/unbind-all-menu-keys))}}))})
 
 (keys/bind "space" (fn [] (menu/enter (menu))) :modifiers ["ctrl"])
