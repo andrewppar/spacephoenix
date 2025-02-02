@@ -75,6 +75,7 @@
                (fn [space] (ps/to-space space)))}
    :n (action "new space" ps/make)
    :q (action "stop auto tile" tile/stop-auto-tile)
+   :r (action "reset spaces" ps/reassign!)
    :s (action "start auto tile" tile/start-auto-tile)
    :t (action "tile" tile/tile)
    :x {:title "delete"
