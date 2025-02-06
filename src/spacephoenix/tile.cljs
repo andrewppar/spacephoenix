@@ -96,6 +96,11 @@
 (defn dont-care-window? [window]
   (contains? app/dont-care-apps (app/title (window/app window))))
 
+(defn tile-on-window-activity [closing? window]
+  (when (and (not (dont-care-window? window))
+             (or closing? (window/normal? window)))
+    (tile)))
+
 (defn start-auto-tile []
   (run!
    (fn [event-string]
@@ -106,12 +111,10 @@
     "windowDidUnminimize"])
   (run!
    (fn [event-string]
-     (swap! events conj
-            (.on js/Event event-string
-                 (fn [window]
-                   (when (and (not (dont-care-window? window))
-                              (window/normal? window))
-                     (tile))))))
+     (let [closing? (= event-string "windowDidClose")]
+       (swap! events conj
+              (.on js/Event event-string
+                   (partial tile-on-window-activity closing?)))))
    ["windowDidOpen" "windowDidClose"]))
 
 (defn stop-auto-tile []
