@@ -4,13 +4,21 @@
 
 (def ^:private config
   {:architecture :aarch
-   :auto-tile true})
+   :auto-tile true
+   :padding
+   {:left 5
+    :right 5
+    :top 5
+    :bottom 5}})
 
 (defn architecture []
   (get config :architecture))
 
 (defn auto-tile []
   (get config :auto-tile))
+
+(defn padding []
+  (get config :padding))
 
 (defn show []
   (let [named-keys (->> config keys (map (juxt name identity)) (into {}))

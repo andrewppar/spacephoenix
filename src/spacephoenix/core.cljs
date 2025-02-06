@@ -37,7 +37,6 @@
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :i (launch-app "wezterm")
-    :l (launch-app "raycast")
     :m (launch-app "Mail")
     :q (action "quit" app/quit-focused)
     :w (launch-app "Webex")
@@ -91,7 +90,7 @@
      (fn [space] (str "activate space " space))
      (fn [space] (ps/activate space)))
     (make-menu
-     {:space (launch-app "raycast")
+     {:space (launch-app "quicksilver")
       :a {:title "apps"
           :items (apps)}
       :e {:title "emacs"
