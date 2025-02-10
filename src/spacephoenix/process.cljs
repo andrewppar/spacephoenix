@@ -15,8 +15,7 @@
   (.run js/Task "/usr/bin/pmset" (clj->js ["sleepnow"]) identity))
 
 (defn capture [task-description]
-  (let [command (str "(org-capture-engine-issue \""
-                     task-description
-                     "\")")
-        emacsclient "/run/current-system/sw/bin/emacsclient"]
-    (.run js/Task emacsclient (clj->js ["--eval" command]))))
+  (.run js/Task
+        "/Users/anparisi/.config/phoenix/scripts/capture.sh"
+        (clj->js [task-description])
+        identity))

@@ -8,11 +8,15 @@
 
 (def initial-spaces [1 2 3])
 
-(def pseudo-spaces (atom
-                    (reduce
-                     (fn [acc space] (assoc acc space []))
-                     {}
-                     initial-spaces)))
+(defn initialize []
+  (reduce
+   (fn [acc space] (assoc acc space []))
+   {}
+   initial-spaces))
+
+
+(def pseudo-spaces
+  (atom (initialize)))
 
 (def active-space (atom 1))
 
@@ -20,8 +24,6 @@
   {"WezTerm" 1
    "Firefox" 2
    "Webex" 3})
-
-
 
 (defn spaces []
   (keys @pseudo-spaces))
@@ -270,6 +272,18 @@
         (str
          "Unassigned: \n"
          (string/join "\n" unassigned)))))))
+
+(defn reassign!
+  "Reassign app windows based on `default-assignment`"
+  []
+  (reset! pseudo-spaces (initialize))
+  (reset! active-space 1)
+  (run!
+   (fn [app]
+     (let [app-name (app/title app)]
+       (when-let [space (get default-assignment app-name)]
+         (run! (partial window-to-space space) (app/windows app)))))
+   (app/all)))
 
 (def window-close-event
  (.on js/Event "windowDidClose" clean-up!))

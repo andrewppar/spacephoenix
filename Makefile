@@ -1,13 +1,18 @@
-build:
-	clj -M -m cljs.main -co build.edn -c
+stop:
+	osascript -e "tell application \"Phoenix\" to quit"
 
-build-dev: build copy-dev
+start:
+	open -a /Applications/Phoenix.app
 
-clean-all: clean
-	rm -rf ../phoenix/phoenix.js
-
-copy-dev:
-	cp phoenix.js ~/.phoenix.debug.js
+install:
+	rm -rf phoenix.js
+	nix build
+	ln -s ./result/phoenix.js phoenix.js
 
 clean:
 	rm -rf out
+
+clean-all: clean
+	rm -rf phoenix.js
+
+run: stop install start

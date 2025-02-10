@@ -3,6 +3,8 @@
 .lsp
 .nrepl-port
 out
+result
 phoenix.js
 src/phoenix/.clj-kondo
 src/phoenix/.lsp
+.direnv
