@@ -22,8 +22,6 @@
     (set! (.-origin modal) #js {:x x :y y })
     (set! (.-text modal) (string/join " " message))
     (set! (.-duration modal) duration)
-    ;; Not a thing :(
-    (set! (.-title modal) title)
     (.show modal)
     modal))
 
