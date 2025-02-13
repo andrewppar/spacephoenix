@@ -10,7 +10,6 @@
 (defn ->location [x y height width]
   {:x x :y y :h height :w width})
 
-
 (defn shrink
   [location dimension &
    {:keys [factor amount] :or {amount 0}}]
@@ -70,8 +69,9 @@
         (-> quarter-size (move :y + :factor 1) config-pad)
         (-> quarter-size (move :x + :factor 1) (move :y + :factor 1) config-pad)]}))
 
-(defn tile []
-  (let [windows (->> (app/all)
+(defn tile-screen [screen]
+  (let [windows (screen/windows screen :visible? true)
+        #_(->> (app/all)
                      (reduce
                       (fn [acc app]
                         (let [windows (.windows app)]
@@ -85,7 +85,7 @@
                              (not (= (window/title window) ""))
                              (not (window/minimized? window)))))
                      (sort-by window/id))
-        {:keys [x y height width]} (screen/current-size-and-position)
+        {:keys [x y height width]} (screen/size-and-position screen)
         window-count (count windows)
         window-map   (get
                       (tile-configurations x y height width) window-count)]
@@ -95,6 +95,9 @@
 
 (defn dont-care-window? [window]
   (contains? app/dont-care-apps (app/title (window/app window))))
+
+(defn tile []
+  (run! tile-screen (screen/all)))
 
 (defn tile-on-window-activity [closing? window]
   (when (and (not (dont-care-window? window))
