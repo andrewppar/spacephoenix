@@ -10,6 +10,7 @@
    [spacephoenix.pseudo-space :as ps]
    [spacephoenix.tile :as tile]
    [spacephoenix.window.core :as window]
+   [spacephoenix.window.screen :as window.screen]
    [spacephoenix.window.switcher :as window-switcher]))
 
 (when (config/auto-tile)
@@ -62,25 +63,26 @@
     (ps/spaces))))
 
 (defn space []
-  {:f {:title "move and follow"
-       :items (make-space-menu
-               (fn [space] (str "move and follow to " space))
-               (fn [space] (ps/to-space space) (ps/activate space)))}
+  (make-menu
+   {:f {:title "move and follow"
+        :items (make-space-menu
+                (fn [space] (str "move and follow to " space))
+                (fn [space] (ps/to-space space) (ps/activate space)))}
 
-   :l (action "list" ps/space-list)
-   :m {:title "move"
-       :items (make-space-menu
-               (fn [space] (str "move to space " space))
-               (fn [space] (ps/to-space space)))}
-   :n (action "new space" ps/make)
-   :q (action "stop auto tile" tile/stop-auto-tile)
-   :r (action "reset spaces" ps/reassign!)
-   :s (action "start auto tile" tile/start-auto-tile)
-   :t (action "tile" tile/tile)
-   :x {:title "delete"
-       :items (make-space-menu
-               (fn [space] (str "delete space " space))
-               (fn [space] (ps/delete! space)))}})
+    :l (action "list" ps/space-list)
+    :m {:title "move"
+        :items (make-space-menu
+                (fn [space] (str "move to space " space))
+                (fn [space] (ps/to-space space)))}
+    :n (action "new space" ps/make)
+    :q (action "stop auto tile" tile/stop-auto-tile)
+    :r (action "reset spaces" ps/reassign!)
+    :s (action "start auto tile" tile/start-auto-tile)
+    :t (action "tile" tile/tile)
+    :x {:title "delete"
+        :items (make-space-menu
+                (fn [space] (str "delete space " space))
+                (fn [space] (ps/delete! space)))}}))
 
 (defn menu []
   {:title "Menu"
@@ -96,6 +98,7 @@
       :e {:title "emacs"
           :items (emacs)}
       :f (action "focus" window-switcher/switch!)
+      :m (action "to screen" window.screen/to-screen!)
       :r (action "reload spacephoenix" (fn [] (.reload js/Phoenix)))
       :w {:title "window"
           :items (window)}

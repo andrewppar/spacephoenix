@@ -22,8 +22,7 @@
 
 (def default-assignment
   {"WezTerm" 1
-   "Firefox" 2
-   "Webex" 3})
+   "Webex" 2})
 
 (defn spaces []
   (keys @pseudo-spaces))

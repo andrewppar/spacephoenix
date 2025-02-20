@@ -1,5 +1,4 @@
-(ns spacephoenix.app
-  (:require [spacephoenix.screen :as screen]))
+(ns spacephoenix.app)
 
 (defn launch [app-name & {:keys [focus?] :or {focus? true}}]
   (.launch js/App app-name (clj->js {:focus focus?})))
@@ -75,15 +74,17 @@
 (defn icon [app]
   (.icon app))
 
-(defn launch-from-input []
-  (let [{:keys [height width]} (screen/current-size-and-position)
-        modal (js/Modal.)]
-    (set! (.-isInput modal) (clj->js true))
-    (set! (.-appearance modal) (clj->js "dark"))
-    (set! (.-origin modal) (clj->js {"x" (/ width 2)
-                                     "y" (/ height 2)}))
-    (set! (.-textDidCommit modal) (clj->js
-                                   (fn [value _]
-                                     (launch value)
-                                     (.close modal))))
-    (.show modal)))
+(comment
+  (defn launch-from-input []
+    (let [{:keys [height width]} (screen/current-size-and-position)
+          modal (js/Modal.)]
+      (set! (.-isInput modal) (clj->js true))
+      (set! (.-appearance modal) (clj->js "dark"))
+      (set! (.-origin modal) (clj->js {"x" (/ width 2)
+                                       "y" (/ height 2)}))
+      (set! (.-textDidCommit modal) (clj->js
+                                     (fn [value _]
+                                       (launch value)
+                                       (.close modal))))
+      (.show modal)))
+  )

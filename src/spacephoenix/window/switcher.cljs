@@ -6,17 +6,6 @@
    [spacephoenix.timer :as timer]
    [spacephoenix.window.core :as window]))
 
-(defn show-numbered-windows []
-  (message/alert
-   (get
-    (reduce
-     (fn [{:keys [count result]} window]
-       {:count (inc count)
-        :result (str result "\n" count ": " (window/title window))})
-     {:count 0 :result ""}
-     (window/all))
-    :result)))
-
 (def titles-to-filter
   #{"Window"
     "Notification Center"})
@@ -39,38 +28,40 @@
     (let [top-left (window/top-left window)
           x (.-x top-left)
           {:keys [height]} (screen/current-size-and-position)
+          title (window/title window)
           half-screen (/ height 2)
           y (.-y top-left)
           reflect-distance (- y half-screen)
           new-pos (- (+ half-screen (- reflect-distance)) 60)]
-      (message/alert (str number)
+      (message/alert (str number ": " title)
                      :duration 5
                      :x-coord x
                      :y-coord new-pos))))
 
+(defn numbered-windows []
+  (let [windows (window/all)]
+    (loop [count 0
+           window (first windows)
+           todo (rest windows)
+           result []]
+      (if window
+        (let [title (window/title window)
+              remove? (or (contains? titles-to-filter title)
+                        (not (window/normal? window))
+                        (window/minimized? window))
+              new-result (if remove?
+                           result
+                           (conj result {:title title :window window :idx count}))
+              new-count (if remove? count (inc count))]
+          (recur new-count (first todo) (rest todo) new-result))
+        result))))
+
 (defn switch! []
-  (let [window-map (reduce
-                    (fn [{:keys [count] :as acc} window]
-                      (let [title (window/title window)]
-                        (if (contains? titles-to-filter title)
-                          acc
-                          (let [entry {:title title
-                                       :window window}]
-                            (assoc acc
-                                   :count (inc count)
-                                   count entry)))))
-                    {:count 0}
-                    (window/all))
-        timer (timer/make 5 (fn [] (unbind-all-window-keys)))
-        alerts (reduce-kv
-                (fn [acc idx {:keys [window]}]
-                  (if-not (= idx :count)
-                    (conj acc (make-window-box idx window))
-                    acc))
-                []
+  (let [timer (timer/make 5 (fn [] (unbind-all-window-keys)))
+        window-map (numbered-windows)
+        alerts (mapv
+                (fn [{:keys [idx window]}] (make-window-box idx window))
                 window-map)]
     (run!
-     (fn [[idx {:keys [window]}]]
-       (when-not (= idx :count)
-         (bind-switch idx window timer alerts)))
+     (fn [{:keys [idx window]}] (bind-switch idx window timer alerts))
      window-map)))
