@@ -68,7 +68,8 @@
         :items (make-space-menu
                 (fn [space] (str "move and follow to " space))
                 (fn [space] (ps/to-space space) (ps/activate space)))}
-
+    :d (action "remove from space"
+               (fn [] (ps/remove-window! (window/focused))))
     :l (action "list" ps/space-list)
     :m {:title "move"
         :items (make-space-menu
