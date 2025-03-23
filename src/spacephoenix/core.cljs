@@ -34,7 +34,11 @@
 
 (defn apps []
   (make-menu
-   {:b (launch-app "Firefox")
+   {:b {:title "browser"
+        :items (make-menu
+                {:b (launch-app "Zen Browser")
+                 :f (launch-app "Firefox")
+                 :z (launch-app "Zen Browser")})}
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :i (launch-app "wezterm")
