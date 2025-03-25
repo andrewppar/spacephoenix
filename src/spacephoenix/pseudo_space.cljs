@@ -35,8 +35,7 @@
 (defn entry-app [{:keys [app]}]
   app)
 
-(defn minimize [{:keys [window]}]
-  (window.core/minimize window))
+
 
 (defn get-space-entry [space window]
   (some
