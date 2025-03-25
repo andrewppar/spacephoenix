@@ -34,7 +34,11 @@
 
 (defn apps []
   (make-menu
-   {:b (launch-app "Firefox")
+   {:b {:title "browser"
+        :items (make-menu
+                {:b (launch-app "Zen Browser")
+                 :f (launch-app "Firefox")
+                 :z (launch-app "Zen Browser")})}
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :i (launch-app "wezterm")
@@ -68,7 +72,8 @@
         :items (make-space-menu
                 (fn [space] (str "move and follow to " space))
                 (fn [space] (ps/to-space space) (ps/activate space)))}
-
+    :d (action "remove from space"
+               (fn [] (ps/remove-window! (window/focused))))
     :l (action "list" ps/space-list)
     :m {:title "move"
         :items (make-space-menu

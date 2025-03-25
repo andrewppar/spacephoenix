@@ -24,18 +24,39 @@
             ''cp phoenix.js $out/phoenix.js''
           ] ;
         buildDependencies = with pkgs; [ clojure openjdk] ;
-        # this doesn't get used in builds, but it is nice to have
-        # it in nix develop - probably should use nix shell nixpkgs#just
-        # if there's good tooling for that
-        devDependencies = with pkgs; [ just ];
       in {
         packages.default = pkgs.stdenv.mkDerivation {
           name = "spacephoenix" ;
           version = "0.0.1" ;
           src = ./. ;
-          buildInputs = buildDependencies ++ devDependencies ;
+          buildInputs = buildDependencies ;
           buildPhase = builtins.concatStringsSep "\n" buildSteps ;
           installPhase = builtins.concatStringsSep "\n" installSteps ;
         } ;
+        devShells.default =
+          let
+            shell-fn = {name, commands}:
+              ("function " + name + "() {\n")
+              + builtins.concatStringsSep "\n" commands
+              + "\n}\n" ;
+            fns = builtins.concatStringsSep "\n"
+              [(shell-fn {name = "clean"; commands = ["rm -rf phoenix.js"];})
+               (shell-fn {name = "clean-all"; commands = ["clean" "rm -rf out"];})
+               (shell-fn {name = "install";
+                          commands = [
+                            "clean"
+                            "nix build"
+                            "ln -s ./result/phoenix.js phoenix.js"];})
+               (shell-fn {name = "run"; commands = ["stop" "install" "start"];})
+               (shell-fn {name = "start"; commands = ["open -a /Applications/Phoenix.app"];})
+               (shell-fn {
+                 name = "stop";
+                 commands = [
+                   ''osascript -e "tell application \"Phoenix\" to quit"''
+                 ];})] ;
+          in pkgs.mkShell {
+            packages = buildDependencies ;
+            shellHook = fns + ''echo "mac <3 clojurescript"'' ;
+          } ;
       }) ;
 }

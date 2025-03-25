@@ -70,7 +70,7 @@
         (-> quarter-size (move :x + :factor 1) (move :y + :factor 1) config-pad)]}))
 
 (defn tile-screen [screen]
-  (let [windows (screen/windows screen :visible? true)
+  (let [windows (sort-by window/id (screen/windows screen :visible? true))
         #_(->> (app/all)
                      (reduce
                       (fn [acc app]
