@@ -5,6 +5,15 @@
 (def ^:private config
   {:architecture :aarch
    :auto-tile true
+   :browser "Zen Browser"
+   :launcher "quicksilver"
+   :terminal "wezterm"
+   :space
+   {:initial [1 2 3]
+    :assignment
+    {"WezTerm" 1
+     "Zen" 1
+     "Webex" 2}}
    :padding
    {:left 5
     :right 5
@@ -17,8 +26,23 @@
 (defn auto-tile []
   (get config :auto-tile))
 
+(defn browser []
+  (get config :browser))
+
+(defn launcher []
+  (get config :launcher))
+
+(defn terminal []
+  (get config :terminal))
+
 (defn padding []
   (get config :padding))
+
+(defn space-initial []
+  (get-in config [:space :initial]))
+
+(defn space-assignment []
+  (get-in config [:space :assignment]))
 
 (defn show []
   (let [named-keys (->> config keys (map (juxt name identity)) (into {}))

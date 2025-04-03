@@ -32,12 +32,6 @@
                  (not (window/minimized? window))
                  (equal? screen (window/screen window))))))))
 
-(defn spaces [screen]
-  (.spaces screen))
-
-(defn current-space [screen]
-  (.currentSpace screen))
-
 (defn height [screen]
   (.-height (.flippedVisibleFrame screen)))
 

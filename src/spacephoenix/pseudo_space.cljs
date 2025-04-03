@@ -2,11 +2,13 @@
   (:require
    [clojure.string :as string]
    [spacephoenix.app :as app]
+   [spacephoenix.config :as config]
    [spacephoenix.message :as message]
    [spacephoenix.window.core :as window.core]
    [spacephoenix.timer :as timer]))
 
-(def initial-spaces [1 2 3])
+(def initial-spaces
+  (or (config/space-initial) [1 2 3]))
 
 (defn initialize []
   (reduce
@@ -20,9 +22,8 @@
 
 (def active-space (atom 1))
 
-(def default-assignment
-  {"WezTerm" 1
-   "Webex" 2})
+(defn focused []
+  @active-space)
 
 (defn spaces []
   (keys @pseudo-spaces))
@@ -34,8 +35,6 @@
 
 (defn entry-app [{:keys [app]}]
   app)
-
-
 
 (defn get-space-entry [space window]
   (some
@@ -272,14 +271,14 @@
          (string/join "\n" unassigned)))))))
 
 (defn reassign!
-  "Reassign app windows based on `default-assignment`"
+  "Reassign app windows based on `config/space-assignment`"
   []
   (reset! pseudo-spaces (initialize))
   (reset! active-space 1)
   (run!
    (fn [app]
      (let [app-name (app/title app)]
-       (when-let [space (get default-assignment app-name)]
+       (when-let [space (get (config/space-assignment) app-name)]
          (run! (partial window-to-space space) (app/windows app)))))
    (app/all)))
 
@@ -301,7 +300,7 @@
           1
           (fn []
             (let [app-name (app/title app)]
-              (when-let [space (get default-assignment app-name)]
+              (when-let [space (get (config/space-assignment) app-name)]
                 (run! (partial window-to-space space) (app/windows app)))))))))
 
 (def window-focus-event
@@ -310,3 +309,12 @@
          (let [space (or (get-space window) @active-space)]
            (set-status! window :minimized? false)
            (activate space)))))
+
+(defn windows [space-number & {:keys [filter-minimized?]}]
+  (reduce
+   (fn [acc {window-minimized? :minimized? :keys [window]}]
+     (if (and filter-minimized? window-minimized?)
+       acc
+       (conj acc window)))
+   []
+  (get @pseudo-spaces space-number)))

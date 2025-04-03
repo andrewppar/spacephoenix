@@ -34,14 +34,14 @@
 
 (defn apps []
   (make-menu
-   {:b {:title "browser"
+   {:a (launch-app (config/launcher))
+    :b {:title "browser"
         :items (make-menu
-                {:b (launch-app "Zen Browser")
-                 :f (launch-app "Firefox")
-                 :z (launch-app "Zen Browser")})}
+                {:f (launch-app "Firefox")
+                 :z (launch-app (config/browser))})}
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
-    :i (launch-app "wezterm")
+    :t (launch-app (config/terminal))
     :m (launch-app "Mail")
     :q (action "quit" app/quit-focused)
     :w (launch-app "Webex")
@@ -97,21 +97,27 @@
      (fn [space] (str "activate space " space))
      (fn [space] (ps/activate space)))
     (make-menu
-     {:space (launch-app "quicksilver")
+     {:space (launch-app (config/launcher))
       :a {:title "apps"
           :items (apps)}
+      :b {:title "browser"
+          :action (fn [] (app/launch (config/browser)))}
       :e {:title "emacs"
           :items (emacs)}
       :f (action "focus" window-switcher/switch!)
       :m (action "to screen" window.screen/to-screen!)
+      :p (action "rotate window screens" window.screen/rotate!)
       :r (action "reload spacephoenix" (fn [] (.reload js/Phoenix)))
-      :w {:title "window"
-          :items (window)}
       :s {:title "space"
           :items (space)}
+      :t {:title "terminal"
+          :action (fn [] (app/launch (config/terminal)))}
+      :w {:title "window"
+          :items (window)}
       :z (action "minimize" ps/minimize-focused)
       :g {:title "quit"
           :modifiers [:ctrl]
           :action (fn [] (menu/unbind-all-menu-keys))}}))})
 
+(ps/reassign!)
 (keys/bind "space" (fn [] (menu/enter (menu))) :modifiers ["ctrl"])
