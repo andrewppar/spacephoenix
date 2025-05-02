@@ -42,7 +42,7 @@
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :t (launch-app (config/terminal))
-    :m (launch-app "Mail")
+    :m (launch-app (config/mail))
     :q (action "quit" app/quit-focused)
     :w (launch-app "Webex")
     :z (launch-app "zoom.us")}))

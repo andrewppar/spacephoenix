@@ -8,6 +8,7 @@
    :browser "Zen Browser"
    :launcher "quicksilver"
    :terminal "wezterm"
+   :mail "Microsoft Outlook"
    :space
    {:initial [1 2 3]
     :assignment
@@ -31,6 +32,9 @@
 
 (defn launcher []
   (get config :launcher))
+
+(defn mail []
+  (get config :mail))
 
 (defn terminal []
   (get config :terminal))
