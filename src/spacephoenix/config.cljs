@@ -8,7 +8,7 @@
    :browser "Zen Browser"
    :launcher "quicksilver"
    :terminal "wezterm"
-   :mail "Microsoft Outlook"
+   :mail "Mail"
    :space
    {:initial [1 2 3]
     :assignment
