@@ -59,11 +59,14 @@
             acc)))
       (if-not root? ["ctrl+g: Back"] [])
       (get-in menu (conj bread-crumbs :items)))))
+   :type :menu
    :duration 4))
 
 (defn enter [menu]
+  (message/close-all-alerts :type :menu)
   (let [bread-crumbs []
         alert (display-new-bindings menu bread-crumbs true)]
+    (unbind-all-menu-keys)
     (bind-layer menu bread-crumbs alert true)))
 
 (defn up-layer [menu bread-crumbs timer alert]
