@@ -70,25 +70,10 @@
         (-> quarter-size (move :x + :factor 1) (move :y + :factor 1) config-pad)]}))
 
 (defn tile-screen [screen]
-  (let [windows (sort-by window/id (screen/windows screen :visible? true))
-        #_(->> (app/all)
-                     (reduce
-                      (fn [acc app]
-                        (let [windows (.windows app)]
-                          (if (seq windows)
-                            (apply conj acc windows)
-                            acc)))
-                      [])
-                     (filter
-                      (fn [window]
-                        (and (window/normal? window)
-                             (not (= (window/title window) ""))
-                             (not (window/minimized? window)))))
-                     (sort-by window/id))
+  (let [windows (sort-by window/id (screen/windows screen :native? true :visible? true))
         {:keys [x y height width]} (screen/size-and-position screen)
         window-count (count windows)
-        window-map   (get
-                      (tile-configurations x y height width) window-count)]
+        window-map   (get (tile-configurations x y height width) window-count)]
     (if window-map
       (mapv window/move-to windows window-map)
       (mapv window/maximize windows))))
