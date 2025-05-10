@@ -1,0 +1,27 @@
+{"anparisi-m-9yr6" {:architecture :aarch
+                    :auto-tile true
+                    :browser "Zen"
+                    :launcher "quicksilver"
+                    :terminal "wezterm"
+                    :mail "Mail"
+                    :space {:initial [1 2 3]
+                            :assignment {"WezTerm" 1 "Zen" 2 "Webex" 3}}
+                    :padding {:left 5 :right 5 :top 5 :bottom 5}}
+ "aristotle" {:architecture :x86
+              :auto-tile true
+              :browser "Zen"
+              :launcher "quicksilver"
+              :terminal "wezterm"
+              :mail "Mail"
+              :space {:initial [1 2 3]
+                      :assignment {"WezTerm" 1 "Zen" 2 "Webex" 3}}
+              :padding {:left 5 :right 5 :top 5 :bottom 5}}
+ "default" {:architecture :aarch
+            :auto-tile true
+            :browser "Safari"
+            :launcher "Finder"
+            :terminal "Terminal"
+            :mail "Mail"
+            :space
+            {:initial [1 2 3]}
+            :padding {:left 5 :right 5 :top 5 :bottom 5}}}

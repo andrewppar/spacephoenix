@@ -1,25 +1,9 @@
 (ns spacephoenix.config
   (:require
+   [spacephoenix.utils :refer [defconfig]]
    [clojure.string :as string]))
 
-(def ^:private config
-  {:architecture :aarch
-   :auto-tile true
-   :browser "Zen Browser"
-   :launcher "quicksilver"
-   :terminal "wezterm"
-   :mail "Mail"
-   :space
-   {:initial [1 2 3]
-    :assignment
-    {"WezTerm" 1
-     "Zen" 1
-     "Webex" 2}}
-   :padding
-   {:left 5
-    :right 5
-    :top 5
-    :bottom 5}})
+(def ^:private config (defconfig))
 
 (defn architecture []
   (get config :architecture))
@@ -48,17 +32,24 @@
 (defn space-assignment []
   (get-in config [:space :assignment]))
 
+(defn indent [amount strings]
+  (let [indent-string (string/join (repeat amount " "))]
+    (mapv (partial str indent-string) strings)))
+
+(defn show-internal [configuration]
+  (let [separator " -> "]
+    (reduce-kv
+     (fn [acc setting-key setting-value]
+       (let [setting-name (name setting-key)]
+         (if (map? setting-value)
+           (let [recursive-case (show-internal setting-value)
+                 setting-length (count setting-name)
+                 first-item (str setting-name separator (first recursive-case))
+                 rest-items (indent (+ setting-length 10) (rest recursive-case))]
+             (into (conj acc first-item) rest-items))
+           (conj acc (str setting-name separator setting-value)))))
+     []
+     configuration)))
+
 (defn show []
-  (let [named-keys (->> config keys (map (juxt name identity)) (into {}))
-        max-setting (apply max (map (comp count first) named-keys))]
-    (reduce
-     (fn [acc [setting-name setting]]
-       (let [value (get config setting)
-             setting-string (str setting-name
-                                 (-> max-setting
-                                     (- (count setting-name))
-                                     (repeat " ")
-                                     string/join))]
-         (str acc setting-string ": " value "\n")))
-     ""
-     (sort-by first named-keys))))
+  (string/join "\n" (show-internal config)))

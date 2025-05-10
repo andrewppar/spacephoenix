@@ -35,10 +35,7 @@
 (defn apps []
   (make-menu
    {:a (launch-app (config/launcher))
-    :b {:title "browser"
-        :items (make-menu
-                {:f (launch-app "Firefox")
-                 :z (launch-app (config/browser))})}
+    :b (launch-app (config/browser))
     :c (launch-app "Calendar")
     :f (launch-app "Finder")
     :t (launch-app (config/terminal))
@@ -114,6 +111,8 @@
           :action (fn [] (app/launch (config/terminal)))}
       :w {:title "window"
           :items (window)}
+      :x {:title "show config"
+          :action (fn [] (message/alert (config/show) :duration 10))}
       :z (action "minimize" ps/minimize-focused)
       :g {:title "quit"
           :modifiers [:ctrl]
