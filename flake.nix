@@ -19,6 +19,7 @@
             ''echo $HOST''
             ''rm -rf phoenix.js''
             ''${pkgs.openjdk}/bin/java -cp ${cljs}:src cljs.main -co build.edn -O advanced -c''
+            ''echo $HOST''
           ] ;
         installSteps =
           [

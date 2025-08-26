@@ -2,10 +2,10 @@
                     :auto-tile true
                     :browser "Zen"
                     :launcher "quicksilver"
-                    :terminal "wezterm"
+                    :terminal "ghostty"
                     :mail "Mail"
                     :space {:initial [1 2 3]
-                            :assignment {"WezTerm" 1 "Zen" 2 "Webex" 3}}
+                            :assignment {"Ghostty" 1 "Zen" 2 "Webex" 3}}
                     :padding {:left 5 :right 5 :top 5 :bottom 5}}
  "aristotle" {:architecture :x86
               :auto-tile true
