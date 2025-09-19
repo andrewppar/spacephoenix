@@ -1,6 +1,7 @@
 (ns spacephoenix.screen
   (:require
    [spacephoenix.window.core :as window]
+   [clojure.string :as string]
    [spacephoenix.app :as app]
    [spacephoenix.config :as cfg]))
 
@@ -28,7 +29,7 @@
          (filter
           (fn [window]
             (and (window/normal? window)
-                 (not (= (window/title window) ""))
+                 (not (string/blank? (window/title window)))
                  (not (window/minimized? window))
                  (equal? screen (window/screen window))))))))
 

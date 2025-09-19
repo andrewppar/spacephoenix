@@ -1,5 +1,6 @@
 (ns spacephoenix.tile
   (:require
+   [clojure.string :as string]
    [spacephoenix.app :as app]
    [spacephoenix.config :as cfg]
    [spacephoenix.screen :as screen]
@@ -70,7 +71,9 @@
         (-> quarter-size (move :x + :factor 1) (move :y + :factor 1) config-pad)]}))
 
 (defn tile-screen [screen]
-  (let [windows (sort-by window/id (screen/windows screen :native? true :visible? true))
+  (let [windows (->> (screen/windows screen :native? true :visible? true)
+                     (remove (comp string/blank? window/title))
+                     (sort-by window/id))
         {:keys [x y height width]} (screen/size-and-position screen)
         window-count (count windows)
         window-map   (get (tile-configurations x y height width) window-count)]
