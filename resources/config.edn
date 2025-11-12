@@ -3,7 +3,7 @@
                     :browser "Zen"
                     :launcher "quicksilver"
                     :terminal "ghostty"
-                    :mail "Mail"
+                    :mail "Microsoft Outlook"
                     :space {:initial [1 2 3]
                             :assignment {"Ghostty" 1 "Zen" 2 "Webex" 3}}
                     :padding {:left 5 :right 5 :top 5 :bottom 5}}
